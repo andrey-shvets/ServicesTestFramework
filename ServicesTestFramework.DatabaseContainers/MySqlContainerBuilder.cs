@@ -12,9 +12,6 @@ namespace ServicesTestFramework.DatabaseContainers
 {
     public class MySqlContainerBuilder
     {
-        public MySqlTestcontainer MySqlContainer { get; protected set; }
-        public MySqlConnection Connection { get; protected set; }
-
         private MySqlTestcontainerConfiguration ContainerConfiguration { get; set; }
         private string MountSourceFolderName { get; set; } = "mysqldata";
         private string SnapshotPath { get; set; }
@@ -60,7 +57,7 @@ namespace ServicesTestFramework.DatabaseContainers
             return this;
         }
 
-        public async Task StartContainer()
+        public async Task<DatabaseContainer> StartContainer()
         {
             if (ContainerConfiguration is null)
                 throw new ArgumentException("Can not start container. Database configuration is not set.");
@@ -70,8 +67,10 @@ namespace ServicesTestFramework.DatabaseContainers
             if (!string.IsNullOrEmpty(SnapshotPath))
                 CopySnapshotData(SnapshotPath, MountSourceFolderName);
 
-            MySqlContainer = InitializeContainer(ContainerConfiguration, MountSourceFolderName, HostPort);
-            Connection = await StartMySqlDatabase(MySqlContainer);
+            var mySqlContainer = InitializeContainer(ContainerConfiguration, MountSourceFolderName, HostPort);
+            var connection = await StartMySqlDatabase(mySqlContainer);
+
+            return new DatabaseContainer { Container = mySqlContainer, Connection = connection };
         }
 
         private static void CleanupFolder(string folderName)

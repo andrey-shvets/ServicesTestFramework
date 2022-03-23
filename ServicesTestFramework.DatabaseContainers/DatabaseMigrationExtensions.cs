@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Common;
 using System.Text.RegularExpressions;
 using MySqlConnector;
 
@@ -7,7 +8,7 @@ namespace ServicesTestFramework.DatabaseContainers
 {
     public static class DatabaseMigrationExtensions
     {
-        public static List<string> ApplyMigrations(this MySqlConnection mySqlConnection, Dictionary<string, string> placeholders, params string[] migrationLocations)
+        public static List<string> ApplyMigrations(this DbConnection mySqlConnection, Dictionary<string, string> placeholders, params string[] migrationLocations)
         {
             var connectionString = GetConnectionString(mySqlConnection);
             var databaseName = GetDatabaseName(connectionString);
@@ -25,12 +26,12 @@ namespace ServicesTestFramework.DatabaseContainers
             return evolve.AppliedMigrations;
         }
 
-        private static string GetConnectionString(MySqlConnection mySqlConnection)
+        private static string GetConnectionString(DbConnection dbConnection)
         {
-            if (mySqlConnection is null)
-                throw new ArgumentNullException(nameof(mySqlConnection), "MySql connection can not be null.");
+            if (dbConnection is null)
+                throw new ArgumentNullException(nameof(dbConnection), "MySql connection can not be null.");
 
-            var connectionString = mySqlConnection.ConnectionString;
+            var connectionString = dbConnection.ConnectionString;
 
             return connectionString;
         }

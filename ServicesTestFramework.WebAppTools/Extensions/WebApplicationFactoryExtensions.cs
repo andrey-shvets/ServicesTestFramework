@@ -38,22 +38,22 @@ namespace ServicesTestFramework.WebAppTools.Extensions
 
                 builder.ConfigureAppConfiguration((_, configBuilder) =>
                 {
-                    if (configureAppConfiguration is not null)
-                        configureAppConfiguration(configBuilder);
-
                     configBuilder
                         .AddJsonFile("appsettings.json", optional: true)
                         .AddEnvironmentVariables();
+
+                    if (configureAppConfiguration is not null)
+                        configureAppConfiguration(configBuilder);
                 });
             });
         }
 
         /// <summary>
-        /// Create RestEase controller for specified interface using http client build with WebApplicationFactory.
+        /// Create RestEase client for specified interface using http client build with WebApplicationFactory.
         /// </summary>
         /// <typeparam name="TController">RestEase controller interface.</typeparam>
         /// <param name="client">Http client for service under test.</param>
-        public static TController ControllerFor<TController>(this HttpClient client) where TController : class
+        public static TController ClientFor<TController>(this HttpClient client) where TController : class
             => RestClient.For<TController>(client);
 
         private static IWebHostBuilder InitializeLogger(this IWebHostBuilder builder, ITestOutputHelper testOutputHelper)
