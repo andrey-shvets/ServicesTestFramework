@@ -1,0 +1,2 @@
+﻿ALTER TABLE thirdTable
+ADD COLUMN Active BIT(1) NOT NULL DEFAULT b'1';

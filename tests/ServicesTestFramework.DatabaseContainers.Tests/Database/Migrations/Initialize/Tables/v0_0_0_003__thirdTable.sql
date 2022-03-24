@@ -1,0 +1,18 @@
+﻿CREATE TABLE IF NOT EXISTS thirdTable (
+  Id INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+  FirstId INT(10) UNSIGNED NOT NULL,
+  SecondId INT(10) UNSIGNED NOT NULL,
+  Comment VARCHAR(60) DEFAULT NULL,
+  PRIMARY KEY (Id)
+)
+ENGINE = INNODB,
+CHARACTER SET utf8,
+COLLATE utf8_unicode_ci;
+
+ALTER TABLE thirdTable 
+  ADD CONSTRAINT FK_thirdTable_firstTable_FirstId FOREIGN KEY (FirstId)
+    REFERENCES firstTable(Id);
+	
+ALTER TABLE thirdTable 
+  ADD CONSTRAINT FK_thirdTable_secondTable_SecondId FOREIGN KEY (SecondId)
+    REFERENCES secondTable(Id);
