@@ -1,0 +1,8 @@
+mode: ContinuousDeployment
+ignore:
+  sha: []
+merge-message-formats: {}
+branches:
+  feature:
+    tag: pre
+update-build-number: true
