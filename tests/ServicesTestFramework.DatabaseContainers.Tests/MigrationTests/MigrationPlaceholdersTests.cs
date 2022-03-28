@@ -46,8 +46,8 @@ namespace ServicesTestFramework.DatabaseContainers.Tests.MigrationTests
             var hotfixCount = await databaseClient.GetHotfixTableCount();
 
             firstCount.Should().Be(7);
-            secondCount.Should().Be(10);
-            thirdCount.Should().Be(9);
+            secondCount.Should().Be(9);
+            thirdCount.Should().Be(10);
             hotfixCount.Should().Be(0);
         }
 
@@ -59,8 +59,7 @@ namespace ServicesTestFramework.DatabaseContainers.Tests.MigrationTests
             var sqlScriptsLocation = "Database";
 
             var containerBuilder = new MySqlContainerBuilder()
-                    .SetDatabaseConfiguration(databaseName, userName, password)
-                    .SetMountSourceFolder(MountSourceFolder);
+                    .SetDatabaseConfiguration(databaseName, userName, password);
 
             var testContainer = await containerBuilder.StartContainer();
 

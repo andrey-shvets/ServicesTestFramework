@@ -4,7 +4,6 @@ using System.IO;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Xunit;
-using static ServicesTestFramework.DatabaseContainers.Tests.Helpers.TestContainerHelpers;
 
 namespace ServicesTestFramework.DatabaseContainers.Tests.MigrationTests
 {
@@ -26,8 +25,7 @@ namespace ServicesTestFramework.DatabaseContainers.Tests.MigrationTests
         public async Task ApplyMigrations_AppliesScriptsFromProvidedFoldersInAscendingOrder()
         {
             var containerBuilder = new MySqlContainerBuilder()
-                .SetDatabaseConfiguration(DatabaseName, UserName, Password)
-                .SetMountSourceFolder(MountSourceFolder);
+                .SetDatabaseConfiguration(DatabaseName, UserName, Password);
 
             TestContainer = await containerBuilder.StartContainer();
 
@@ -47,8 +45,7 @@ namespace ServicesTestFramework.DatabaseContainers.Tests.MigrationTests
         public async Task ApplyMigrations_UsingSnapshotWithAllMigrations_DoesNotApplyAnyAdditionalMigrations()
         {
             var containerBuilder = new MySqlContainerBuilder()
-                .SetDatabaseConfiguration(DatabaseName, UserName, Password)
-                .SetMountSourceFolder(MountSourceFolder);
+                .SetDatabaseConfiguration(DatabaseName, UserName, Password);
 
             var snapshotPath = Path.Combine(AppContext.BaseDirectory, SqlScriptsLocation, "data-snapshot-all.zip");
             containerBuilder.SetDatabaseSnapshot(snapshotPath);
@@ -67,8 +64,7 @@ namespace ServicesTestFramework.DatabaseContainers.Tests.MigrationTests
         public async Task ApplyMigrations_UsingSnapshot_ApplesOnlyNewMigrations()
         {
             var containerBuilder = new MySqlContainerBuilder()
-                .SetDatabaseConfiguration(DatabaseName, UserName, Password)
-                .SetMountSourceFolder(MountSourceFolder);
+                .SetDatabaseConfiguration(DatabaseName, UserName, Password);
 
             var snapshotPath = Path.Combine(AppContext.BaseDirectory, SqlScriptsLocation, "data-snapshot.zip");
             containerBuilder.SetDatabaseSnapshot(snapshotPath);

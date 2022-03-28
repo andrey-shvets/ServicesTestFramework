@@ -7,15 +7,18 @@ using DotNet.Testcontainers.Containers.Configurations.Databases;
 using DotNet.Testcontainers.Containers.Modules.Abstractions;
 using DotNet.Testcontainers.Containers.Modules.Databases;
 using MySqlConnector;
+using static ServicesTestFramework.DatabaseContainers.Helpers.FileSystemHelper;
+using static ServicesTestFramework.DatabaseContainers.Helpers.RandomHelper;
 
 namespace ServicesTestFramework.DatabaseContainers
 {
     public class MySqlContainerBuilder
     {
+        private const string MountSourcePrefix = "mySqlData";
         private MySqlTestcontainerConfiguration ContainerConfiguration { get; set; }
-        private string MountSourceFolderName { get; set; } = "mysqldata";
+        private string MountSourceFolderName { get; set; }
         private string SnapshotPath { get; set; }
-        private int HostPort { get; set; } = 6603;
+        private int HostPort { get; set; } = RandomPort(minValue: 5000);
 
         public MySqlContainerBuilder SetDatabaseConfiguration(string databaseName, string username, string password)
         {
@@ -27,6 +30,9 @@ namespace ServicesTestFramework.DatabaseContainers
             return this;
         }
 
+        /// <summary>
+        /// Binds and mounts the specified host machine volume into the container. Default value "mySqlData-<hostPort>".
+        /// </summary>
         public MySqlContainerBuilder SetMountSourceFolder(string sourceFolderName)
         {
             if (string.IsNullOrEmpty(sourceFolderName))
@@ -62,7 +68,9 @@ namespace ServicesTestFramework.DatabaseContainers
             if (ContainerConfiguration is null)
                 throw new ArgumentException("Can not start container. Database configuration is not set.");
 
-            CleanupFolder(MountSourceFolderName);
+            MountSourceFolderName ??= $"{MountSourcePrefix}-{HostPort}";
+
+            CleanupMountFolder(MountSourceFolderName);
 
             if (!string.IsNullOrEmpty(SnapshotPath))
                 CopySnapshotData(SnapshotPath, MountSourceFolderName);
@@ -73,12 +81,12 @@ namespace ServicesTestFramework.DatabaseContainers
             return new DatabaseContainer { Container = mySqlContainer, Connection = connection };
         }
 
-        private static void CleanupFolder(string folderName)
+        private static void CleanupMountFolder(string mountFolderName)
         {
-            if (Directory.Exists($"./{folderName}"))
-                Directory.Delete($"./{folderName}", recursive: true);
+            var mountFolderPath = $"./{mountFolderName}";
 
-            Directory.CreateDirectory($"./{folderName}");
+            CleanupFolder(mountFolderPath);
+            Directory.CreateDirectory(mountFolderPath);
         }
 
         private static void CopySnapshotData(string snapshotPath, string mountSourceFolder)

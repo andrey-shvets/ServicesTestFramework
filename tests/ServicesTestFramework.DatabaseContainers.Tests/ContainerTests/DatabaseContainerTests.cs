@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using MySqlConnector;
 using Xunit;
-using static ServicesTestFramework.DatabaseContainers.Tests.Helpers.TestContainerHelpers;
 
 namespace ServicesTestFramework.DatabaseContainers.Tests.ContainerTests
 {
@@ -23,7 +22,6 @@ namespace ServicesTestFramework.DatabaseContainers.Tests.ContainerTests
         {
             TestContainer = await new MySqlContainerBuilder()
                                 .SetDatabaseConfiguration(DatabaseName, UserName, Password)
-                                .SetMountSourceFolder(MountSourceFolder)
                                 .StartContainer();
 
             var connectionString = TestContainer.Connection.ConnectionString;
@@ -37,11 +35,13 @@ namespace ServicesTestFramework.DatabaseContainers.Tests.ContainerTests
         public async Task StopContainer_DisposesOfContainerAndAllowsToCreateNewContainerRunningFromTheSameMountFolder()
         {
             var containerBuilder = new MySqlContainerBuilder()
-                .SetDatabaseConfiguration(DatabaseName, UserName, Password)
-                .SetMountSourceFolder(MountSourceFolder);
+                .SetDatabaseConfiguration(DatabaseName, UserName, Password);
 
             TestContainer = await containerBuilder.StartContainer();
-            await TestContainer.StopContainer();
+
+            var stopContainerTask = TestContainer.StopContainer();
+            stopContainerTask.Wait();
+
             var connection = new MySqlConnection(TestContainer.Connection.ConnectionString);
             Action openConnection = () => connection.Open();
 

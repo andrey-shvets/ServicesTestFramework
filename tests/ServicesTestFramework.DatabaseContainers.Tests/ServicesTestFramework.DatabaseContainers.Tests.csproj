@@ -23,8 +23,8 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\..\ServicesTestFramework.DatabaseContainers\ServicesTestFramework.DatabaseContainers.csproj" />
-		<ProjectReference Include="..\..\ServicesTestFramework.WebAppTools\ServicesTestFramework.WebAppTools.csproj" />
+		<ProjectReference Include="..\..\src\ServicesTestFramework.DatabaseContainers\ServicesTestFramework.DatabaseContainers.csproj" />
+		<ProjectReference Include="..\..\src\ServicesTestFramework.WebAppTools\ServicesTestFramework.WebAppTools.csproj" />
 		<ProjectReference Include="..\ServicesTestFramework.ExampleApi\ServicesTestFramework.ExampleApi.csproj" />
 	</ItemGroup>
 
