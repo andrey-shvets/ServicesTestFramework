@@ -1,4 +1,4 @@
-name: ServicesTestFramework $(Major).$(Minor)$(Rev:.r)
+name: ServicesTestFramework $(Major).$(Minor)$(Rev:.r) Test
 
 trigger:
   batch: true

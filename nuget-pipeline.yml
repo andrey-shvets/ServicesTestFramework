@@ -1,4 +1,4 @@
-name: ServicesTestFramework $(Major).$(Minor)$(Rev:.r)
+name: ServicesTestFramework $(Major).$(Minor)$(Rev:.r) Nuget
 
 trigger:
   batch: true
