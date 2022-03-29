@@ -2,10 +2,6 @@ name: ServicesTestFramework $(Major).$(Minor)$(Rev:.r) Test
 
 trigger:
   batch: true
-  branches:
-    include:
-      - dev
-      - main
   paths:
     include:
       - '*'
