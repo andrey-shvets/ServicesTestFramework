@@ -61,6 +61,7 @@ namespace ServicesTestFramework.WebAppTools.Extensions
             if (testOutputHelper is null)
                 return builder;
 
+#pragma warning disable CS0618 // Type or member is obsolete
             builder.UseSerilog((_, loggerConfiguration) =>
             {
                 loggerConfiguration.MinimumLevel.Is(LogEventLevel.Verbose);
@@ -69,6 +70,7 @@ namespace ServicesTestFramework.WebAppTools.Extensions
                 loggerConfiguration.WriteTo.TestOutput(testOutputHelper,
                     outputTemplate: "[{Timestamp:HH:mm:ss} {Level}] {SourceContext}{NewLine}{Message:lj}{NewLine}{Properties:j}{NewLine}{Exception}{NewLine}");
             });
+#pragma warning restore CS0618 // Type or member is obsolete
 
             return builder;
         }

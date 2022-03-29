@@ -17,14 +17,14 @@ parameters:
     type: string
     default: Release
     values:
-    - Release
-    - Debug
+      - Release
+      - Debug
   - name: realm
     displayName: Realm
     type: string
     default: DEV
     values:
-    - DEV
+      - DEV
   - name: skipTests
     displayName: Skip Tests
     type: boolean
