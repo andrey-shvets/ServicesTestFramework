@@ -57,6 +57,9 @@ namespace ServicesTestFramework.ExampleApi
                 .AddControllers();
 
             services.AddScoped<ITestDao, TestDao>();
+
+            services.AddScoped<IMultipleImplementationsService, MultipleImplementationsService>();
+            services.AddScoped<IMultipleImplementationsService, MultipleImplementationsExtraService>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

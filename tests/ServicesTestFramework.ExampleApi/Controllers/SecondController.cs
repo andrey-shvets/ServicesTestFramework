@@ -27,24 +27,24 @@ namespace ServicesTestFramework.ExampleApi.Controllers
             TestDao = testDao;
         }
 
-        [HttpGet("getScopedServiceValue")]
-        public ActionResult<string> GetScopedServiceValue()
+        [HttpGet("getScopedServiceName")]
+        public ActionResult<string> GetScopedServiceName()
         {
             var name = TestScopedServiceInstance.GetServiceName();
 
             return Ok(name);
         }
 
-        [HttpGet("getSingletonServiceValue")]
-        public ActionResult<string> GetSingletonServiceValue()
+        [HttpGet("getSingletonServiceName")]
+        public ActionResult<string> GetSingletonServiceName()
         {
             var name = TestSingletonServiceInstance.GetServiceName();
 
             return Ok(name);
         }
 
-        [HttpGet("getTransientServiceValue")]
-        public ActionResult<string> GetTransientServiceValue()
+        [HttpGet("getTransientServiceName")]
+        public ActionResult<string> GetTransientServiceName()
         {
             var name = TestTransientServiceInstance.GetServiceName();
 

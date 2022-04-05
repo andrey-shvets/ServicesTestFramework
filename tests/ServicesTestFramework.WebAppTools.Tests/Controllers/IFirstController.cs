@@ -14,14 +14,17 @@ namespace ServicesTestFramework.WebAppTools.Tests.Controllers
         [Get("getUserIdWithPolicy")]
         Task<string> GetUserIdWithPolicy([Header(nameof(HeaderNames.Authorization))] string authToken);
 
-        [Get("getScopedServiceValue")]
-        Task<string> GetScopedServiceValue();
+        [Get("getScopedServiceName")]
+        Task<string> GetScopedServiceName();
 
-        [Get("getSingletonServiceValue")]
-        Task<string> GetSingletonServiceValue();
+        [Get("getSingletonServiceName")]
+        Task<string> GetSingletonServiceName();
 
-        [Get("getTransientServiceValue")]
-        Task<string> GetTransientServiceValue();
+        [Get("getTransientServiceName")]
+        Task<string> GetTransientServiceName();
+
+        [Get("getMultipleImplementationsServiceName")]
+        public Task<string> GetMultipleImplementationsServiceName();
 
         [Get("health")]
         [AllowAnyStatusCode]

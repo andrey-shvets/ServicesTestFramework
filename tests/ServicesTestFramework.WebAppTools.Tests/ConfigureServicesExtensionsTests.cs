@@ -79,9 +79,9 @@ namespace ServicesTestFramework.WebAppTools.Tests
 
             var firstClient = client.ClientFor<IFirstController>();
 
-            var scopedValue = await firstClient.GetScopedServiceValue();
-            var singletonValue = await firstClient.GetSingletonServiceValue();
-            var transientValue = await firstClient.GetTransientServiceValue();
+            var scopedValue = await firstClient.GetScopedServiceName();
+            var singletonValue = await firstClient.GetSingletonServiceName();
+            var transientValue = await firstClient.GetTransientServiceName();
 
             scopedValue.Should().Be("mockScopedService");
             singletonValue.Should().Be("mockSingletonService");
@@ -103,9 +103,9 @@ namespace ServicesTestFramework.WebAppTools.Tests
 
             var firstClient = client.ClientFor<IFirstController>();
 
-            var scopedValue = await firstClient.GetScopedServiceValue();
-            var singletonValue = await firstClient.GetSingletonServiceValue();
-            var transientValue = await firstClient.GetTransientServiceValue();
+            var scopedValue = await firstClient.GetScopedServiceName();
+            var singletonValue = await firstClient.GetSingletonServiceName();
+            var transientValue = await firstClient.GetTransientServiceName();
 
             scopedValue.Should().Be("mockScopedService");
             singletonValue.Should().Be("mockSingletonService");
@@ -127,9 +127,9 @@ namespace ServicesTestFramework.WebAppTools.Tests
 
             var firstClient = client.ClientFor<IFirstController>();
 
-            var scopedValue = await firstClient.GetScopedServiceValue();
-            var singletonValue = await firstClient.GetSingletonServiceValue();
-            var transientValue = await firstClient.GetTransientServiceValue();
+            var scopedValue = await firstClient.GetScopedServiceName();
+            var singletonValue = await firstClient.GetSingletonServiceName();
+            var transientValue = await firstClient.GetTransientServiceName();
 
             scopedValue.Should().Be("mockScopedService");
             singletonValue.Should().Be("mockSingletonService");
@@ -159,6 +159,60 @@ namespace ServicesTestFramework.WebAppTools.Tests
             scopedServiceName.Should().Be("mockScopedService");
             singletonServiceName.Should().Be("mockSingletonService");
             transientServiceName.Should().Be("mockTransientService");
+        }
+
+        [Fact]
+        public async Task Swap_ServiceWithMultipleImplementations_ChangesServiceToProvidedInstance()
+        {
+            var client = ApplicationFactory.WithWebHostConfiguration(
+                    servicesConfiguration: services =>
+                    {
+                        services.Swap<IMultipleImplementationsService>(Mock.Of<IMultipleImplementationsService>(s => s.GetServiceName() == "mockServiceName"));
+                    },
+                    testOutputHelper: OutputHelper)
+                .CreateClient();
+
+            var firstClient = client.ClientFor<IFirstController>();
+
+            var serviceName = await firstClient.GetMultipleImplementationsServiceName();
+
+            serviceName.Should().Be("mockServiceName");
+        }
+
+        [Fact]
+        public async Task Swap_ServiceWithMultipleImplementations_ChangesServiceToProvidedImplementation()
+        {
+            var client = ApplicationFactory.WithWebHostConfiguration(
+                    servicesConfiguration: services =>
+                    {
+                        services.Swap<IMultipleImplementationsService, MultipleImplementationsServiceMock>();
+                    },
+                    testOutputHelper: OutputHelper)
+                .CreateClient();
+
+            var firstClient = client.ClientFor<IFirstController>();
+
+            var serviceName = await firstClient.GetMultipleImplementationsServiceName();
+
+            serviceName.Should().Be("mockServiceName");
+        }
+
+        [Fact]
+        public async Task Swap_ServiceWithMultipleImplementations_ChangesServiceToProvidedImplementationFactory()
+        {
+            var client = ApplicationFactory.WithWebHostConfiguration(
+                    servicesConfiguration: services =>
+                    {
+                        services.Swap<IMultipleImplementationsService>(_ => Mock.Of<IMultipleImplementationsService>(s => s.GetServiceName() == "mockServiceName"));
+                    },
+                    testOutputHelper: OutputHelper)
+                .CreateClient();
+
+            var firstClient = client.ClientFor<IFirstController>();
+
+            var serviceName = await firstClient.GetMultipleImplementationsServiceName();
+
+            serviceName.Should().Be("mockServiceName");
         }
     }
 }

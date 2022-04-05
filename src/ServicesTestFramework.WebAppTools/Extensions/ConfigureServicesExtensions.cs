@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace ServicesTestFramework.WebAppTools.Extensions
 {
@@ -10,7 +11,7 @@ namespace ServicesTestFramework.WebAppTools.Extensions
             where TService : class
         {
             var descriptor = services.FindServiceDescriptor<TService>();
-            services.Remove(descriptor);
+            services.RemoveAll<TService>();
 
             switch (descriptor.Lifetime)
             {
@@ -33,7 +34,7 @@ namespace ServicesTestFramework.WebAppTools.Extensions
             where TImplementation : class, TService
         {
             var descriptor = services.FindServiceDescriptor<TService>();
-            services.Remove(descriptor);
+            services.RemoveAll<TService>();
 
             switch (descriptor.Lifetime)
             {
@@ -55,7 +56,7 @@ namespace ServicesTestFramework.WebAppTools.Extensions
             where TService : class
         {
             var descriptor = services.FindServiceDescriptor<TService>();
-            services.Remove(descriptor);
+            services.RemoveAll<TService>();
 
             switch (descriptor.Lifetime)
             {
@@ -86,7 +87,7 @@ namespace ServicesTestFramework.WebAppTools.Extensions
 
         private static ServiceDescriptor FindServiceDescriptor<TService>(this IServiceCollection services) where TService : class
         {
-            var descriptor = services.SingleOrDefault(d => d.ServiceType == typeof(TService));
+            var descriptor = services.FirstOrDefault(d => d.ServiceType == typeof(TService));
 
             if (descriptor is null)
                 throw new InvalidOperationException($"Failed to find {typeof(TService)} service in application service collection");

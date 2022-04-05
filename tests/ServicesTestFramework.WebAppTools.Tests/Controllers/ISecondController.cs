@@ -7,14 +7,14 @@ namespace ServicesTestFramework.WebAppTools.Tests.Controllers
     [BasePath("second")]
     public interface ISecondController
     {
-        [Get("getScopedServiceValue")]
-        Task<string> GetScopedServiceValue();
+        [Get("getScopedServiceName")]
+        Task<string> GetScopedServiceName();
 
-        [Get("getSingletonServiceValue")]
-        Task<string> GetSingletonServiceValue();
+        [Get("getSingletonServiceName")]
+        Task<string> GetSingletonServiceName();
 
-        [Get("getTransientServiceValue")]
-        Task<string> GetTransientServiceValue();
+        [Get("getTransientServiceName")]
+        Task<string> GetTransientServiceName();
 
         [Get("getConfigValue")]
         Task<string> GetConfigValue([Query] string configKey);
