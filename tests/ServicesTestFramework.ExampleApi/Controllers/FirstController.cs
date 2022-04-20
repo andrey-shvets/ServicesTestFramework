@@ -1,4 +1,6 @@
-﻿using System.Security.Claims;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -44,6 +46,35 @@ namespace ServicesTestFramework.ExampleApi.Controllers
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
             return Ok(userId);
+        }
+
+        [HttpGet("getClaimByType")]
+        public ActionResult<string> GetClaimByType([FromQuery] string claimType)
+        {
+            var claims = User.FindAll(claimType).ToList();
+
+            if (!claims.Any())
+                return NotFound($"Failed to find any claims of type {claimType}");
+
+            if (claims.Count > 1)
+                return BadRequest($"{claims.Count} claims of type {claimType} were found, while only one was expected.");
+
+            var claimValue = claims.First().Value;
+
+            return Ok(claimValue);
+        }
+
+        [HttpGet("getClaimsByType")]
+        public ActionResult<IEnumerable<string>> GetClaimsByType([FromQuery] string claimType)
+        {
+            var claims = User.FindAll(claimType).ToList();
+
+            if (!claims.Any())
+                return NotFound($"Failed to find any claims of type {claimType}");
+
+            var claimValues = claims.Select(c => c.Value);
+
+            return Ok(claimValues);
         }
 
         [HttpGet("getScopedServiceName")]
