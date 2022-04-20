@@ -5,9 +5,8 @@ using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using RestEase;
-using Serilog;
-using Serilog.Events;
 using Xunit.Abstractions;
 
 namespace ServicesTestFramework.WebAppTools.Extensions
@@ -61,16 +60,10 @@ namespace ServicesTestFramework.WebAppTools.Extensions
             if (testOutputHelper is null)
                 return builder;
 
-#pragma warning disable CS0618 // Type or member is obsolete
-            builder.UseSerilog((_, loggerConfiguration) =>
+            builder.ConfigureTestServices(services =>
             {
-                loggerConfiguration.MinimumLevel.Is(LogEventLevel.Verbose);
-                loggerConfiguration.Enrich.FromLogContext();
-
-                loggerConfiguration.WriteTo.TestOutput(testOutputHelper,
-                    outputTemplate: "[{Timestamp:HH:mm:ss} {Level}] {SourceContext}{NewLine}{Message:lj}{NewLine}{Properties:j}{NewLine}{Exception}{NewLine}");
+                services.AddLogging(logBuilder => logBuilder.AddXUnit(testOutputHelper));
             });
-#pragma warning restore CS0618 // Type or member is obsolete
 
             return builder;
         }

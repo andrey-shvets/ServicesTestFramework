@@ -1,0 +1,47 @@
+﻿using System;
+using FluentAssertions;
+using ServicesTestFramework.WebAppTools.Exceptions;
+using Xunit;
+
+namespace ServicesTestFramework.WebAppTools.Tests.Common
+{
+    public class ExceptionInterceptorTests : IDisposable
+    {
+        private Exception ExpectedException { get; } = new CustomTestException("message", "additional data");
+
+        public ExceptionInterceptorTests()
+        {
+            ExceptionInterceptor.InitializeExceptionCapture();
+        }
+
+        [Fact]
+        public void ExceptionInterceptor_StoresExceptionThrownByTest()
+        {
+            ExceptionInterceptor.CurrentTestException.Should().BeNull();
+
+            try
+            {
+                throw ExpectedException;
+            }
+            catch
+            {
+                ExceptionInterceptor.CurrentTestException.Should().Be(ExpectedException);
+            }
+        }
+
+        public void Dispose()
+        {
+            ExceptionInterceptor.CurrentTestException.Should().Be(ExpectedException);
+        }
+
+        public class CustomTestException : Exception
+        {
+            public string AdditionalData { get; }
+
+            public CustomTestException(string message, string additionalData) : base(message)
+            {
+                AdditionalData = additionalData;
+            }
+        }
+    }
+}

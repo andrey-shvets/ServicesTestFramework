@@ -10,6 +10,7 @@ trigger:
       - '*'
     exclude:
       - '**/*.md'
+      - '**/tests/**'
 
 parameters:
   - name: buildConfiguration
@@ -38,6 +39,7 @@ pool:
   vmImage: 'ubuntu-latest'
 
 variables:
+  gitversionVerisonSpec: "5.10.1"
   ${{ if eq( variables['Build.SourceBranchName'], 'main' ) }}:
     packageVersionNumber: '$(MajorMinorPatch)'
     isMainBranch: true
@@ -55,7 +57,7 @@ variables:
 steps:
   - task: gitversion/setup@0
     inputs:
-      versionSpec: '5.x'
+      versionSpec: $(gitversionVerisonSpec)
 
   - task: gitversion/execute@0
 
@@ -101,7 +103,7 @@ steps:
       versioningScheme: byEnvVar
       versionEnvVar: packageVersionNumber
       includeSymbols: true
-      buildProperties: 'SymbolPackageFormat=snupkg'
+      buildProperties: 'IncludeReferencedProjects=true;SymbolPackageFormat=snupkg'
 
   - task: PublishBuildArtifacts@1
     inputs:

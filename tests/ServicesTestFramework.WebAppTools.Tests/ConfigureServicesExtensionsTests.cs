@@ -14,15 +14,14 @@ using Xunit.Abstractions;
 
 namespace ServicesTestFramework.WebAppTools.Tests
 {
-    public class ConfigureServicesExtensionsTests : IClassFixture<WebApplicationFactory<Startup>>
+    public class ConfigureServicesExtensionsTests : BaseTest, IClassFixture<WebApplicationFactory<Startup>>
     {
         private WebApplicationFactory<Startup> ApplicationFactory { get; }
-        private ITestOutputHelper OutputHelper { get; }
 
-        public ConfigureServicesExtensionsTests(WebApplicationFactory<Startup> factory, ITestOutputHelper testOutputHelper)
+        public ConfigureServicesExtensionsTests(WebApplicationFactory<Startup> factory, ITestOutputHelper outputHelper)
+            : base(outputHelper)
         {
             ApplicationFactory = factory;
-            OutputHelper = testOutputHelper;
         }
 
         [Fact]

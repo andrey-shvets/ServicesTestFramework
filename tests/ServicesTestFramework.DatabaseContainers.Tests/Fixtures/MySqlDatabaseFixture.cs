@@ -39,7 +39,8 @@ namespace ServicesTestFramework.DatabaseContainers.Tests.Fixtures
 
         public async Task DisposeAsync()
         {
-            await Container.StopContainer();
+            if(Container is not null)
+                await Container.StopContainer();
         }
     }
 }
