@@ -1,24 +1,17 @@
 ﻿using System;
 using System.IO;
 using System.Threading.Tasks;
-using DotNet.Testcontainers.Containers.Builders;
-using DotNet.Testcontainers.Containers.Configurations.Abstractions;
 using DotNet.Testcontainers.Containers.Configurations.Databases;
-using DotNet.Testcontainers.Containers.Modules.Abstractions;
-using DotNet.Testcontainers.Containers.Modules.Databases;
-using MySqlConnector;
+using ServicesTestFramework.DatabaseContainers.Containers;
 using static ServicesTestFramework.DatabaseContainers.Helpers.FileSystemHelper;
-using static ServicesTestFramework.DatabaseContainers.Helpers.RandomHelper;
 
 namespace ServicesTestFramework.DatabaseContainers
 {
     public class MySqlContainerBuilder
     {
-        private const string MountSourcePrefix = "mySqlData";
         private MySqlTestcontainerConfiguration ContainerConfiguration { get; set; }
         private string MountSourceFolderName { get; set; }
         private string SnapshotPath { get; set; }
-        private int HostPort { get; set; } = RandomPort(minValue: 5000);
 
         public MySqlContainerBuilder SetDatabaseConfiguration(string databaseName, string username, string password)
         {
@@ -31,7 +24,7 @@ namespace ServicesTestFramework.DatabaseContainers
         }
 
         /// <summary>
-        /// Binds and mounts the specified host machine volume into the container. Default value "mySqlData-<hostPort>".
+        /// Binds and mounts the specified host machine volume into the container. If not set generates name like "mySqlDB_[random alphanumeric string]".
         /// </summary>
         public MySqlContainerBuilder SetMountSourceFolder(string sourceFolderName)
         {
@@ -39,16 +32,6 @@ namespace ServicesTestFramework.DatabaseContainers
                 throw new ArgumentException("Source folder name can not be null or empty.", nameof(sourceFolderName));
 
             MountSourceFolderName = sourceFolderName;
-
-            return this;
-        }
-
-        public MySqlContainerBuilder SetHostPort(int port)
-        {
-            if (port <= 0)
-                throw new ArgumentException("host port should be positive.", nameof(port));
-
-            HostPort = port;
 
             return this;
         }
@@ -63,30 +46,31 @@ namespace ServicesTestFramework.DatabaseContainers
             return this;
         }
 
-        public async Task<DatabaseContainer> StartContainer()
+        public async Task<MySqlContainer> StartContainer()
         {
             if (ContainerConfiguration is null)
                 throw new ArgumentException("Can not start container. Database configuration is not set.");
 
-            MountSourceFolderName ??= $"{MountSourcePrefix}-{HostPort}";
+            var mountSourceFolder = MountSourceFolderName ?? DatabaseContainerPool.RandomMountSourceFolder();
+            var containerName = mountSourceFolder;
 
-            CleanupMountFolder(MountSourceFolderName);
+            PrepareMountSourceFolder(mountSourceFolder, SnapshotPath);
 
-            if (!string.IsNullOrEmpty(SnapshotPath))
-                CopySnapshotData(SnapshotPath, MountSourceFolderName);
+            var mySqlContainer = MySqlContainer.InitializeContainer(ContainerConfiguration, mountSourceFolder, containerName);
+            await mySqlContainer.StartContainer();
 
-            var mySqlContainer = InitializeContainer(ContainerConfiguration, MountSourceFolderName, HostPort);
-            var connection = await StartMySqlDatabase(mySqlContainer);
-
-            return new DatabaseContainer { Container = mySqlContainer, Connection = connection };
+            return mySqlContainer;
         }
 
-        private static void CleanupMountFolder(string mountFolderName)
+        private static void PrepareMountSourceFolder(string mountSourceFolder, string snapshotPath)
         {
-            var mountFolderPath = $"./{mountFolderName}";
+            var mountSourcePath = Path.GetFullPath(mountSourceFolder);
 
-            CleanupFolder(mountFolderPath);
-            Directory.CreateDirectory(mountFolderPath);
+            CleanupFolder(mountSourcePath);
+            Directory.CreateDirectory(mountSourcePath);
+
+            if (!string.IsNullOrEmpty(snapshotPath))
+                CopySnapshotData(snapshotPath, mountSourcePath);
         }
 
         private static void CopySnapshotData(string snapshotPath, string mountSourceFolder)
@@ -94,22 +78,6 @@ namespace ServicesTestFramework.DatabaseContainers
             var extractPath = Path.Combine(AppContext.BaseDirectory, mountSourceFolder);
 
             Archiver.Unzip(snapshotPath, extractPath);
-        }
-
-        private static MySqlTestcontainer InitializeContainer(TestcontainerDatabaseConfiguration containerConfiguration, string mountSourceFolderPath, int port)
-        {
-            return new TestcontainersBuilder<MySqlTestcontainer>()
-                .WithDatabase(containerConfiguration)
-                .WithMount(mountSourceFolderPath, "/var/lib/mysql")
-                .WithEntrypoint("docker-entrypoint.sh", "--lower-case-table-names=1", "--innodb-page-size=65536", "--innodb-strict-mode=OFF", "--sql-mode=NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION")
-                .WithPortBinding(port)
-                .Build();
-        }
-
-        private static async Task<MySqlConnection> StartMySqlDatabase(TestcontainerDatabase container)
-        {
-            await container.StartAsync().ConfigureAwait(false);
-            return new MySqlConnection($"{container.ConnectionString}allowUserVariables=true;");
         }
     }
 }

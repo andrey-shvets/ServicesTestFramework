@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using FluentAssertions;
+using ServicesTestFramework.DatabaseContainers.Containers;
 using Xunit;
 using static ServicesTestFramework.DatabaseContainers.Tests.Helpers.TestContainerHelpers;
 
@@ -10,7 +11,7 @@ namespace ServicesTestFramework.DatabaseContainers.Tests.MigrationTests
 {
     public class MigrationPlaceholdersTests : IAsyncLifetime
     {
-        private DatabaseContainer TestContainer { get; set; }
+        private MySqlContainer TestContainer { get; set; }
 
         public Task InitializeAsync() => Task.CompletedTask;
 
@@ -51,7 +52,7 @@ namespace ServicesTestFramework.DatabaseContainers.Tests.MigrationTests
             hotfixCount.Should().Be(0);
         }
 
-        private static async Task<DatabaseContainer> StartDatabaseInContainer(Dictionary<string, string> placeholders)
+        private static async Task<MySqlContainer> StartDatabaseInContainer(Dictionary<string, string> placeholders)
         {
             var databaseName = "testdb";
             var userName = "testUser";

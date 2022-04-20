@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using FluentAssertions;
+using ServicesTestFramework.DatabaseContainers.Containers;
 using Xunit;
 
 namespace ServicesTestFramework.DatabaseContainers.Tests.MigrationTests
@@ -15,7 +16,7 @@ namespace ServicesTestFramework.DatabaseContainers.Tests.MigrationTests
         private const string DefaultScenarioPlaceholder = "First";
         private const string SqlScriptsLocation = "Database";
 
-        private DatabaseContainer TestContainer { get; set; }
+        private MySqlContainer TestContainer { get; set; }
 
         public Task InitializeAsync() => Task.CompletedTask;
 

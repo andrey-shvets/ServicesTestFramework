@@ -21,5 +21,8 @@ namespace ServicesTestFramework.DatabaseContainers.Helpers
                     throw new IOException($"Failed to clean up folder {path}. Some files/subfolders were not deleted.", ex);
             }
         }
+
+        public static bool IsEmptyFolder(string path) =>
+            !Directory.Exists(path) || Directory.GetFiles(path).Length == 0 && Directory.GetDirectories(path).Length == 0;
     }
 }

@@ -2,16 +2,17 @@
 using System.Threading.Tasks;
 using FluentAssertions;
 using MySqlConnector;
+using ServicesTestFramework.DatabaseContainers.Containers;
 using Xunit;
 
 namespace ServicesTestFramework.DatabaseContainers.Tests.ContainerTests
 {
-    public class DatabaseContainerTests : IAsyncLifetime
+    public class MySqlContainerTests : IAsyncLifetime
     {
         private const string DatabaseName = "testdb";
         private const string UserName = "testUser";
         private const string Password = "123456789";
-        private DatabaseContainer TestContainer { get; set; }
+        private MySqlContainer TestContainer { get; set; }
 
         public Task InitializeAsync() => Task.CompletedTask;
 

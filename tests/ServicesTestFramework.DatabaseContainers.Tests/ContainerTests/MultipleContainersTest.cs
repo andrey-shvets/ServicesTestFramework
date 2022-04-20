@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using FluentAssertions;
+using ServicesTestFramework.DatabaseContainers.Containers;
 using Xunit;
 
 namespace ServicesTestFramework.DatabaseContainers.Tests.ContainerTests
@@ -10,8 +11,8 @@ namespace ServicesTestFramework.DatabaseContainers.Tests.ContainerTests
         private const string UserName = "testUser";
         private const string Password = "123456789";
 
-        private DatabaseContainer TestContainer { get; set; }
-        private DatabaseContainer AdditionalTestContainer { get; set; }
+        private MySqlContainer TestContainer { get; set; }
+        private MySqlContainer AdditionalTestContainer { get; set; }
 
         public Task InitializeAsync() => Task.CompletedTask;
 

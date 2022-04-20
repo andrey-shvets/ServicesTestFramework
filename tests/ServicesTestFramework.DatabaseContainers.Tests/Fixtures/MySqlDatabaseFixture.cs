@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data.Common;
 using System.IO;
 using System.Threading.Tasks;
+using ServicesTestFramework.DatabaseContainers.Containers;
 using Xunit;
 
 namespace ServicesTestFramework.DatabaseContainers.Tests.Fixtures
@@ -13,8 +14,7 @@ namespace ServicesTestFramework.DatabaseContainers.Tests.Fixtures
         private const bool InitializeDatabaseFromSnapshot = true;
         private const string DefaultScenarioPlaceholder = "First";
         private const string SqlScriptsLocation = "Database";
-        private static string MountSourceFolder => $"mysqlData{DateTimeOffset.Now.Ticks}";
-        private DatabaseContainer Container { get; set; }
+        private MySqlContainer Container { get; set; }
 
         public DbConnection Connection => Container?.Connection;
 
@@ -39,7 +39,7 @@ namespace ServicesTestFramework.DatabaseContainers.Tests.Fixtures
 
         public async Task DisposeAsync()
         {
-            if(Container is not null)
+            if (Container is not null)
                 await Container.StopContainer();
         }
     }
