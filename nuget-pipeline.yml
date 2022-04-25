@@ -98,7 +98,7 @@ steps:
     displayName: Pack NuGet
     inputs:
       command: 'pack'
-      packagesToPack: $(System.DefaultWorkingDirectory)/src/**/*.csproj
+      packagesToPack: $(nugetPackagesToPack)
       outputDir: $(nugetPathToPublish)
       versioningScheme: byEnvVar
       versionEnvVar: packageVersionNumber

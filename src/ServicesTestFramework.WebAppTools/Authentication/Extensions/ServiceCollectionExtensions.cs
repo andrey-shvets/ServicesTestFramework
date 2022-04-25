@@ -1,24 +1,31 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using System.Collections.Generic;
+using System.Reflection;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using ServicesTestFramework.WebAppTools.Authentication.Options;
+using ServicesTestFramework.WebAppTools.Extensions;
 
 namespace ServicesTestFramework.WebAppTools.Authentication.Extensions
 {
     public static class ServiceCollectionExtensions
     {
-        public static IServiceCollection AddMockAuthentication(this IServiceCollection services)
+        public static IServiceCollection AddMockAuthentication(this IServiceCollection services, string authScheme = JwtBearerDefaults.AuthenticationScheme)
         {
-            const string AuthScheme = "MockAuth";
+            services.Swap<IAuthenticationSchemeProvider, MockAuthenticationSchemeProvider>();
 
             services
                 .AddAuthentication(options =>
                 {
-                    options.DefaultScheme = AuthScheme;
-                    options.DefaultAuthenticateScheme = AuthScheme;
-                    options.DefaultChallengeScheme = AuthScheme;
+                    options.SchemeMap.Remove(authScheme);
+
+                    options.DefaultScheme = authScheme;
+                    options.DefaultAuthenticateScheme = authScheme;
+                    options.DefaultChallengeScheme = authScheme;
                 })
-                .AddScheme<JwtBearerOptions, JwtBearerHandler>(AuthScheme, options => options.TokenValidationParameters = new TokenValidationParameters
+                .AddScheme<JwtBearerOptions, JwtBearerHandler>(authScheme, options => options.TokenValidationParameters = new TokenValidationParameters
                 {
                     ValidateAudience = false,
                     ValidateIssuer = false,
@@ -27,6 +34,29 @@ namespace ServicesTestFramework.WebAppTools.Authentication.Extensions
                 });
 
             return services;
+        }
+
+        private class MockAuthenticationSchemeProvider : AuthenticationSchemeProvider
+        {
+            private static FieldInfo SchemesField =>
+                typeof(MockAuthenticationSchemeProvider).BaseType!.GetField("_schemes", BindingFlags.NonPublic | BindingFlags.Instance);
+
+            public MockAuthenticationSchemeProvider(IOptions<AuthenticationOptions> options)
+                : base(options, new Dictionary<string, AuthenticationScheme>())
+            {
+            }
+
+            protected MockAuthenticationSchemeProvider(IOptions<AuthenticationOptions> options, IDictionary<string, AuthenticationScheme> schemes)
+                : base(options, schemes)
+            { }
+
+            public override void AddScheme(AuthenticationScheme scheme)
+            {
+                var schemes = SchemesField.GetValue(this) as IDictionary<string, AuthenticationScheme>;
+                schemes?.Remove(scheme.Name);
+
+                base.AddScheme(scheme);
+            }
         }
     }
 }

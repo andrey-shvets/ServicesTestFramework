@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using Xunit.Abstractions;
 
-namespace ServicesTestFramework.WebAppTools.Authentication.Extensions
+namespace ServicesTestFramework.WebAppTools.Extensions
 {
     public static class TestOutputHelperExtensions
     {

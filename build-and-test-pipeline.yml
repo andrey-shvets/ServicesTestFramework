@@ -10,18 +10,33 @@ parameters:
     values:
       - Release
       - Debug
+  - name: skipTests
+    displayName: Skip Tests
+    type: boolean
+    default: false
 
 pool:
   vmImage: 'ubuntu-latest'
 
 variables:
+  gitversionVerisonSpec: "5.10.1"
+  ${{ if eq( variables['Build.SourceBranchName'], 'main' ) }}:
+    packageVersionNumber: '$(MajorMinorPatch)'
+    isMainBranch: true
+  ${{ if ne( variables['Build.SourceBranchName'], 'main' ) }}:
+    packageVersionNumber: '$(LegacySemVer)'
+    isMainBranch: false
   buildProjectPath: '**/*.csproj'
   testProjectsFilter: '$(System.DefaultWorkingDirectory)/tests/*.Tests/*.csproj'
+  publishWebAppToolsProject: '$(System.DefaultWorkingDirectory)/src/**/ServicesTestFramework.WebAppTools.csproj'
+  publishContainerProject: '$(System.DefaultWorkingDirectory)/src/**/ServicesTestFramework.DatabaseContainers.csproj'
+  nugetPackagesToPack: '$(System.DefaultWorkingDirectory)/src/**/*.csproj'
+  nugetPathToPublish: '$(Build.ArtifactStagingDirectory)/NugetPackage'
 
 steps:
   - task: gitversion/setup@0
     inputs:
-      versionSpec: '5.x'
+      versionSpec: $(gitversionVerisonSpec)
 
   - task: gitversion/execute@0
 
@@ -33,7 +48,35 @@ steps:
 
   - task: DotNetCoreCLI@2
     displayName: dotnet test
+    enabled: ${{ not(parameters.skipTests) }}
     inputs:
       command: 'test'
       projects: $(testProjectsFilter)
       arguments: '--configuration ${{ parameters.buildConfiguration }}'
+
+  - task: NuGetToolInstaller@1
+    displayName: Configure NuGet
+
+  - task: DotNetCoreCLI@2
+    displayName: dotnet publish
+    inputs:
+      command: 'publish'
+      publishWebProjects: false
+      projects: |
+        $(publishWebAppToolsProject)
+        $(publishContainerProject)
+      arguments: '-o $(Build.ArtifactStagingDirectory)/Output'
+      zipAfterPublish: true
+      modifyOutputPath: true
+      configuration: Release
+
+  - task: DotNetCoreCLI@2
+    displayName: Pack NuGet
+    inputs:
+      command: 'pack'
+      packagesToPack: $(nugetPackagesToPack)
+      outputDir: $(nugetPathToPublish)
+      versioningScheme: byEnvVar
+      versionEnvVar: packageVersionNumber
+      includeSymbols: true
+      buildProperties: 'IncludeReferencedProjects=true;SymbolPackageFormat=snupkg'
