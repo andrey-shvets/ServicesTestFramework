@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
-using Microsoft.IdentityModel.JsonWebTokens;
-using ServicesTestFramework.WebAppTools.Authentication.Factories;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using ServicesTestFramework.WebAppTools.Authentication.Options;
 
-namespace ServicesTestFramework.WebAppTools.Authentication.Extensions
+namespace ServicesTestFramework.WebAppTools.Authentication
 {
     public class FakeToken
     {
@@ -76,6 +77,13 @@ namespace ServicesTestFramework.WebAppTools.Authentication.Extensions
 
         public static implicit operator string(FakeToken token) => token.ToString();
 
-        public override string ToString() => TestAuthTokenFactory.FromClaims(Claims.ToArray());
+        public override string ToString() => FromClaims(Claims.ToArray());
+
+        public static string FromClaims(params Claim[] claims)
+        {
+            var securityTokenHandler = new JwtSecurityTokenHandler();
+            var token = new JwtSecurityToken(TestJwtTokenOptions.Issuer, audience: null, claims, notBefore: null, DateTime.UtcNow.AddYears(value: 1), TestJwtTokenOptions.SigningCredentials);
+            return $"{JwtBearerDefaults.AuthenticationScheme} {securityTokenHandler.WriteToken(token)}";
+        }
     }
 }

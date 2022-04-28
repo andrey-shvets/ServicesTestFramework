@@ -1,8 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using FluentAssertions;
-using Microsoft.AspNetCore.Mvc.Testing;
-using Microsoft.Extensions.Configuration;
 using ServicesTestFramework.DatabaseContainers.Tests.Controllers;
 using ServicesTestFramework.DatabaseContainers.Tests.Fixtures;
 using ServicesTestFramework.ExampleApi;
@@ -13,13 +11,13 @@ using Xunit.Abstractions;
 namespace ServicesTestFramework.DatabaseContainers.Tests
 {
     [Collection(MySqlDatabaseCollection.CollectionName)]
-    public class DatabaseExampleTest : IClassFixture<WebApplicationFactory<Startup>>
+    public class DatabaseExampleTest : IClassFixture<WebApplicationBuilder<Startup>>
     {
         private IDatabaseController DatabaseClient { get; }
 
         public DatabaseExampleTest(
             MySqlDatabaseFixture mySqlDatabaseFixture,
-            WebApplicationFactory<Startup> factory,
+            WebApplicationBuilder<Startup> builder,
             ITestOutputHelper testOutputHelper)
         {
             var imMemoryConfig = new Dictionary<string, string>
@@ -27,9 +25,9 @@ namespace ServicesTestFramework.DatabaseContainers.Tests
                 { "Database:ConnectionString", mySqlDatabaseFixture.Connection.ConnectionString }
             };
 
-            var client = factory.WithWebHostConfiguration(
-                    configureAppConfiguration: configBuilder => configBuilder.AddInMemoryCollection(imMemoryConfig),
-                    testOutputHelper: testOutputHelper)
+            var client = builder
+                .AddConfiguration(imMemoryConfig)
+                .AddXUnitLogger(testOutputHelper)
                 .CreateClient();
 
             DatabaseClient = client.ClientFor<IDatabaseController>();

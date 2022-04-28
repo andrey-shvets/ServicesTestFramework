@@ -2,9 +2,8 @@
 using System.Security.Claims;
 using System.Threading.Tasks;
 using FluentAssertions;
-using Microsoft.AspNetCore.Mvc.Testing;
 using ServicesTestFramework.ExampleApi;
-using ServicesTestFramework.WebAppTools.Authentication.Extensions;
+using ServicesTestFramework.WebAppTools.Authentication;
 using ServicesTestFramework.WebAppTools.Extensions;
 using ServicesTestFramework.WebAppTools.Tests.Controllers;
 using Xunit;
@@ -12,16 +11,16 @@ using Xunit.Abstractions;
 
 namespace ServicesTestFramework.WebAppTools.Tests.Authentication
 {
-    public class MockAuthenticationFakeTokenTests : BaseTest, IClassFixture<WebApplicationFactory<Startup>>
+    public class MockAuthenticationFakeTokenTests : BaseTest, IClassFixture<WebApplicationBuilder<Startup>>
     {
         private IFirstController Client { get; }
 
-        public MockAuthenticationFakeTokenTests(WebApplicationFactory<Startup> factory, ITestOutputHelper outputHelper)
+        public MockAuthenticationFakeTokenTests(WebApplicationBuilder<Startup> builder, ITestOutputHelper outputHelper)
             : base(outputHelper)
         {
-            var httpClient = factory.WithWebHostConfiguration(
-                    servicesConfiguration: services => services.AddMockAuthentication(),
-                    testOutputHelper: OutputHelper)
+            var httpClient = builder
+                .AddMockAuthentication()
+                .AddXUnitLogger(OutputHelper)
                 .CreateClient();
 
             Client = httpClient.ClientFor<IFirstController>();

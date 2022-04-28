@@ -12,6 +12,11 @@ namespace ServicesTestFramework.WebAppTools.Authentication.Extensions
 {
     public static class ServiceCollectionExtensions
     {
+        /// <summary>
+        /// Mocks authentication. Use in combination with <see cref="FakeToken"/>
+        /// </summary>
+        /// <param name="services"></param>
+        /// <param name="authScheme">Authentication scheme to override.</param>
         public static IServiceCollection AddMockAuthentication(this IServiceCollection services, string authScheme = JwtBearerDefaults.AuthenticationScheme)
         {
             services.Swap<IAuthenticationSchemeProvider, MockAuthenticationSchemeProvider>();

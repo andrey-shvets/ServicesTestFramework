@@ -38,7 +38,7 @@ namespace ServicesTestFramework.WebAppTools.Extensions
                 builder.ConfigureAppConfiguration((_, configBuilder) =>
                 {
                     configBuilder
-                        .AddJsonFile("appsettings.json", optional: true)
+                        .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
                         .AddEnvironmentVariables();
 
                     if (configureAppConfiguration is not null)

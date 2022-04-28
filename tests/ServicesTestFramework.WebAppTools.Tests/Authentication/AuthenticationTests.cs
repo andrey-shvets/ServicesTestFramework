@@ -2,10 +2,9 @@
 using System.Net;
 using System.Threading.Tasks;
 using FluentAssertions;
-using Microsoft.AspNetCore.Mvc.Testing;
 using RestEase;
 using ServicesTestFramework.ExampleApi;
-using ServicesTestFramework.WebAppTools.Authentication.Extensions;
+using ServicesTestFramework.WebAppTools.Authentication;
 using ServicesTestFramework.WebAppTools.Extensions;
 using ServicesTestFramework.WebAppTools.Tests.Controllers;
 using Xunit;
@@ -13,16 +12,16 @@ using Xunit.Abstractions;
 
 namespace ServicesTestFramework.WebAppTools.Tests.Authentication
 {
-    public class AuthenticationTests : BaseTest, IClassFixture<WebApplicationFactory<Startup>>
+    public class AuthenticationTests : BaseTest, IClassFixture<WebApplicationBuilder<Startup>>
     {
         private IFirstController Client { get; }
 
-        public AuthenticationTests(WebApplicationFactory<Startup> factory, ITestOutputHelper outputHelper)
+        public AuthenticationTests(WebApplicationBuilder<Startup> builder, ITestOutputHelper outputHelper)
             : base(outputHelper)
         {
-            var httpClient = factory.WithWebHostConfiguration(
-                    servicesConfiguration: services => services.AddMockAuthentication(),
-                    testOutputHelper: OutputHelper)
+            var httpClient = builder
+                .AddMockAuthentication()
+                .AddXUnitLogger(OutputHelper)
                 .CreateClient();
 
             Client = httpClient.ClientFor<IFirstController>();
@@ -45,6 +44,8 @@ namespace ServicesTestFramework.WebAppTools.Tests.Authentication
             Func<Task> getWithPolicy = async () => await Client.GetUserIdWithPolicy(FakeToken.WithJwtId(expectedUserId));
             await getWithPolicy.Should().ThrowAsync<ApiException>().Where(e => e.StatusCode == HttpStatusCode.Unauthorized);
 
+            var ex = await Assert.ThrowsAsync<ApiException>(async () => await Client.GetUserIdWithPolicy(FakeToken.WithJwtId(expectedUserId)));
+            ex.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
             var requiredPolicy = "TestPolicy";
             var userId = await Client.GetUserIdWithPolicy(FakeToken.WithJwtId(expectedUserId).And(requiredPolicy));
             userId.Should().Be(expectedUserId.ToString());

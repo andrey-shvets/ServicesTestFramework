@@ -7,6 +7,10 @@ namespace ServicesTestFramework.WebAppTools.Extensions
 {
     public static class ConfigureServicesExtensions
     {
+        /// <summary>
+        /// Removes all services in <see cref="IServiceCollection"/> with the same service type
+        /// as <typeparamref name="TService"/> and replaces them with <paramref name="implementationInstance"/>.
+        /// </summary>
         public static void Swap<TService>(this IServiceCollection services, TService implementationInstance)
             where TService : class
         {
@@ -29,6 +33,10 @@ namespace ServicesTestFramework.WebAppTools.Extensions
             }
         }
 
+        /// <summary>
+        /// Removes all services in <see cref="IServiceCollection"/> with the same service type
+        /// as <typeparamref name="TService"/> and replaces them with <typeparamref name="TImplementation"/>.
+        /// </summary>
         public static void Swap<TService, TImplementation>(this IServiceCollection services)
             where TService : class
             where TImplementation : class, TService
@@ -52,6 +60,10 @@ namespace ServicesTestFramework.WebAppTools.Extensions
             }
         }
 
+        /// <summary>
+        /// Removes all services in <see cref="IServiceCollection"/> with the same service type
+        /// as <typeparamref name="TService"/> and replaces them with <paramref name="implementationFactory"/>.
+        /// </summary>
         public static void Swap<TService>(this IServiceCollection services, Func<IServiceProvider, TService> implementationFactory)
             where TService : class
         {
