@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Runtime.CompilerServices;
 using System.Threading;
 
 namespace ServicesTestFramework.WebAppTools.Exceptions
@@ -7,9 +6,8 @@ namespace ServicesTestFramework.WebAppTools.Exceptions
     public static class ExceptionInterceptor
     {
         private static ThreadLocal<Exception> CurrentTestExceptionHandler { get; } = new ThreadLocal<Exception>();
-        public static Exception CurrentTestException => CurrentTestExceptionHandler.Value;
+        public static Exception LastCapturedException => CurrentTestExceptionHandler.Value;
 
-        [ModuleInitializer]
         public static void InitializeExceptionCapture()
         {
             AppDomain.CurrentDomain.FirstChanceException += (_, e) =>

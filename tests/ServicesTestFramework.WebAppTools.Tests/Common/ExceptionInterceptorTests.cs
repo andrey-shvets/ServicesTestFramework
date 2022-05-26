@@ -17,7 +17,7 @@ namespace ServicesTestFramework.WebAppTools.Tests.Common
         [Fact]
         public void ExceptionInterceptor_StoresExceptionThrownByTest()
         {
-            ExceptionInterceptor.CurrentTestException.Should().BeNull();
+            ExceptionInterceptor.LastCapturedException.Should().BeNull();
 
             try
             {
@@ -25,13 +25,13 @@ namespace ServicesTestFramework.WebAppTools.Tests.Common
             }
             catch
             {
-                ExceptionInterceptor.CurrentTestException.Should().Be(ExpectedException);
+                ExceptionInterceptor.LastCapturedException.Should().Be(ExpectedException);
             }
         }
 
         public void Dispose()
         {
-            ExceptionInterceptor.CurrentTestException.Should().Be(ExpectedException);
+            ExceptionInterceptor.LastCapturedException.Should().Be(ExpectedException);
         }
 
         public class CustomTestException : Exception

@@ -3,7 +3,7 @@ using RestEase;
 using ServicesTestFramework.WebAppTools.Exceptions;
 using Xunit.Abstractions;
 
-namespace ServicesTestFramework.WebAppTools.Tests
+namespace ServicesTestFramework.DatabaseContainers.Tests
 {
     public abstract class BaseTest : IDisposable
     {
