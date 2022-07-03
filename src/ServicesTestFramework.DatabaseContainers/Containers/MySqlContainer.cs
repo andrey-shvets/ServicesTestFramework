@@ -1,10 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data.Common;
+using System.IO;
 using System.Threading.Tasks;
-using DotNet.Testcontainers.Containers.Builders;
-using DotNet.Testcontainers.Containers.Configurations.Abstractions;
-using DotNet.Testcontainers.Containers.Modules.Abstractions;
-using DotNet.Testcontainers.Containers.Modules.Databases;
+using DotNet.Testcontainers.Builders;
+using DotNet.Testcontainers.Configurations;
+using DotNet.Testcontainers.Containers;
 using MySqlConnector;
 using static ServicesTestFramework.DatabaseContainers.Helpers.FileSystemHelper;
 
@@ -23,11 +24,22 @@ namespace ServicesTestFramework.DatabaseContainers.Containers
 
         public static MySqlContainer InitializeContainer(TestcontainerDatabaseConfiguration containerConfiguration, string mountSourceFolder, string containerName)
         {
+            var entryPointParams = new List<string>
+            {
+                "docker-entrypoint.sh",
+                "--lower-case-table-names=1",
+                "--innodb-page-size=65536",
+                "--innodb-strict-mode=OFF",
+                "--sql-mode=NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION"
+            }.ToArray();
+
+            var mountSourcePath = Path.GetFullPath(mountSourceFolder);
+
             var container = new TestcontainersBuilder<MySqlTestcontainer>()
                 .WithDatabase(containerConfiguration)
                 .WithName(containerName)
-                .WithMount(mountSourceFolder, "/var/lib/mysql")
-                .WithEntrypoint("docker-entrypoint.sh", "--lower-case-table-names=1", "--innodb-page-size=65536", "--innodb-strict-mode=OFF", "--sql-mode=NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION")
+                .WithBindMount(mountSourcePath, "/var/lib/mysql")
+                .WithEntrypoint(entryPointParams)
                 .Build();
 
             return new MySqlContainer { Container = container, MountSourceFolder = mountSourceFolder };

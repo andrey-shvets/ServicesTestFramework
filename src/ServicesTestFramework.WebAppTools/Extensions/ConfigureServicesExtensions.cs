@@ -93,11 +93,11 @@ namespace ServicesTestFramework.WebAppTools.Extensions
             if (serviceScopeFactory is null)
                 throw new Exception($"Failed to retrieve {nameof(IServiceScopeFactory)} from provided WebApplicationFactory.");
 
-            using var serviceScope = serviceScopeFactory.CreateScope();
+            var serviceScope = serviceScopeFactory.CreateScope();
             return serviceScope.ServiceProvider.GetRequiredService<TService>();
         }
 
-        private static ServiceDescriptor FindServiceDescriptor<TService>(this IServiceCollection services) where TService : class
+        public static ServiceDescriptor FindServiceDescriptor<TService>(this IServiceCollection services) where TService : class
         {
             var descriptor = services.FirstOrDefault(d => d.ServiceType == typeof(TService));
 

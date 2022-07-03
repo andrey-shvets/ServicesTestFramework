@@ -6,10 +6,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="DotNet.Testcontainers" Version="1.5.0" />
     <PackageReference Include="DotNetZip" Version="1.16.0" />
     <PackageReference Include="Evolve" Version="3.0.0" />
-    <PackageReference Include="MySqlConnector" Version="2.1.9" />
+    <PackageReference Include="MySqlConnector" Version="2.1.10" />
+    <PackageReference Include="Testcontainers" Version="2.0.1" />
   </ItemGroup>
 
 </Project>

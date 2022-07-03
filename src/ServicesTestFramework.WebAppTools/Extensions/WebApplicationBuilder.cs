@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -21,6 +23,8 @@ namespace ServicesTestFramework.WebAppTools.Extensions
         private List<Action<IServiceCollection>> ServicesConfigurations { get; } = new List<Action<IServiceCollection>>();
         private List<Action<IConfigurationBuilder>> ConfigureAppConfigurations { get; } = new List<Action<IConfigurationBuilder>>();
         private Dictionary<string, string> InMemoryCollectionConfig { get; } = new Dictionary<string, string>();
+
+        private InMemoryDatabaseRoot InMemoryDatabaseRootObject { get; set; }
 
         public WebApplicationBuilder()
         {
@@ -67,6 +71,28 @@ namespace ServicesTestFramework.WebAppTools.Extensions
             ServicesConfigurations.Add(services => services.Swap<TService>(implementationFactory));
 
             return this;
+        }
+
+        /// <summary>
+        /// Replaces existing <typeparamref name="TContext"/> in <see cref="IServiceCollection"/> with context
+        /// configured by <paramref name="dbContextConfiguration"/>.
+        /// </summary>
+        public WebApplicationBuilder<TEntryPoint> SwapDbContext<TContext>(Action<DbContextOptionsBuilder> dbContextConfiguration)
+            where TContext : DbContext
+        {
+            ServicesConfigurations.Add(services => services.SwapDbContext<TContext>(dbContextConfiguration));
+
+            return this;
+        }
+
+        /// <summary>
+        /// Configures EntityFramework context <see cref="TContext"/> to connect to a named in-memory database.
+        /// </summary>
+        public WebApplicationBuilder<TEntryPoint> SwapDbContextWithInMemoryDatabase<TContext>(string databaseName = null)
+            where TContext : DbContext
+        {
+            InMemoryDatabaseRootObject ??= new InMemoryDatabaseRoot();
+            return SwapDbContext<TContext>(builder => builder.UseInMemoryDatabase(databaseName ?? "InMemoryDatabase", InMemoryDatabaseRootObject));
         }
 
         /// <summary>
@@ -171,7 +197,7 @@ namespace ServicesTestFramework.WebAppTools.Extensions
                 builder.ConfigureAppConfiguration((_, configBuilder) =>
                 {
                     configBuilder
-                        .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+                        .AddJsonFile("appsettings.json", optional: true, reloadOnChange: false)
                         .AddEnvironmentVariables();
 
                     foreach (var configureAppConfiguration in ConfigureAppConfigurations)

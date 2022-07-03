@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Threading.Tasks;
-using DotNet.Testcontainers.Containers.Configurations.Databases;
+using DotNet.Testcontainers.Configurations;
 using ServicesTestFramework.DatabaseContainers.Containers;
 using static ServicesTestFramework.DatabaseContainers.Helpers.FileSystemHelper;
 

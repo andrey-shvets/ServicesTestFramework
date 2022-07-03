@@ -2,6 +2,8 @@
 {
     public class DatabaseOptions
     {
+        public const string SectionKey = "Database";
+
         public string ConnectionString { get; init; }
     }
 }

@@ -1,9 +1,12 @@
 ﻿using System.Security.Claims;
+using Ardalis.Specification;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using ServicesTestFramework.ExampleApi.Configuration.Options;
 using ServicesTestFramework.ExampleApi.Extensions;
@@ -50,7 +53,7 @@ namespace ServicesTestFramework.ExampleApi
                 options.AddPolicy("OtherPolicy", policy => policy.RequireClaim("OtherPolicy"));
             });
 
-            services.Configure<DatabaseOptions>(Configuration.GetSection("Database"));
+            services.Configure<DatabaseOptions>(Configuration.GetSection(DatabaseOptions.SectionKey));
 
             services
                 .AddRouting()
@@ -60,6 +63,21 @@ namespace ServicesTestFramework.ExampleApi
 
             services.AddScoped<IMultipleImplementationsService, MultipleImplementationsService>();
             services.AddScoped<IMultipleImplementationsService, MultipleImplementationsExtraService>();
+
+            services.AddDbContext<TestDatabaseContext>(
+                (provider, options) =>
+                {
+                    var optionsService = provider.GetRequiredService<IOptions<CosmosDbOptions>>();
+                    var cosmosOptions = optionsService.Value;
+
+                    options.UseCosmos(
+                        cosmosOptions.AccountEndpoint,
+                        cosmosOptions.AccountKey,
+                        "TestDatabase",
+                        cosmosOptionsAction: null);
+                });
+
+            services.AddScoped(typeof(IRepositoryBase<>), typeof(CosmosDbRepository<>));
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
