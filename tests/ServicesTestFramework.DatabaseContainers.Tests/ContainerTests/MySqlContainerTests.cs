@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Docker.DotNet;
 using FluentAssertions;
 using MySqlConnector;
 using ServicesTestFramework.DatabaseContainers.Containers;
@@ -16,13 +17,18 @@ namespace ServicesTestFramework.DatabaseContainers.Tests.ContainerTests
 
         public Task InitializeAsync() => Task.CompletedTask;
 
-        public async Task DisposeAsync() => await TestContainer.StopContainer();
+        public async Task DisposeAsync()
+        {
+            if (TestContainer is not null)
+                await TestContainer.StopContainer();
+        }
 
         [Fact]
         public async Task StartContainer_CreatesContainerWithDatabaseInitialized()
         {
             TestContainer = await new MySqlContainerBuilder()
                                 .SetDatabaseConfiguration(DatabaseName, UserName, Password)
+                                .SetImageTagName("mysql:8.0.28")
                                 .StartContainer();
 
             var connectionString = TestContainer.Connection.ConnectionString;
@@ -55,6 +61,27 @@ namespace ServicesTestFramework.DatabaseContainers.Tests.ContainerTests
             connectionString.Should().Contain($"Database={DatabaseName}");
             connectionString.Should().Contain($"Uid={UserName}");
             connectionString.Should().Contain($"Pwd={Password}");
+        }
+
+        [Theory]
+        [InlineData(null)]
+        [InlineData("")]
+        public void SetImageTagName_ThrowsArgumentException_ForInvalidImageTag(string image)
+        {
+            _ = Assert.Throws<ArgumentException>(() => new MySqlContainerBuilder().SetImageTagName(image));
+        }
+
+        [Theory]
+        [InlineData("non/existing/image:9.8.7")]
+        [InlineData("mysql:999.42.24")]
+        public async Task SetImageTagName_ThrowsDockerImageNotFoundException_ForNonExistentImage(string image)
+        {
+            var ex = await Assert.ThrowsAsync<DockerImageNotFoundException>(async () => await new MySqlContainerBuilder()
+                                                                                            .SetDatabaseConfiguration(DatabaseName, UserName, Password)
+                                                                                            .SetImageTagName(image)
+                                                                                            .StartContainer());
+
+            ex.Message.Should().Contain("No such image");
         }
     }
 }

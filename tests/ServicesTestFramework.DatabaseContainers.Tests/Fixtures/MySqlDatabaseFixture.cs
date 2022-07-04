@@ -21,6 +21,7 @@ namespace ServicesTestFramework.DatabaseContainers.Tests.Fixtures
         public async Task InitializeAsync()
         {
             var containerBuilder = new MySqlContainerBuilder()
+                .SetImageTagName("mysql:8.0.18")
                 .SetDatabaseConfiguration(DatabaseName, "testUser", "123456789");
 
             if (InitializeDatabaseFromSnapshot)

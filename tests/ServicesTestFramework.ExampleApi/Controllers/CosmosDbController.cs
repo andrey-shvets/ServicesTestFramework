@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Net.Http;
 using System.Threading.Tasks;
 using Ardalis.Specification;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Azure.Cosmos;
-using Microsoft.EntityFrameworkCore.Infrastructure;
 using ServicesTestFramework.ExampleApi.Repositories.Entities;
 
 namespace ServicesTestFramework.ExampleApi.Controllers
@@ -18,21 +15,6 @@ namespace ServicesTestFramework.ExampleApi.Controllers
         public CosmosDbController(IRepositoryBase<TestDatabaseEntity> repository)
         {
             Repository = repository;
-        }
-
-        private void ConfigureLocalCosmosOptionsBuilder(CosmosDbContextOptionsBuilder builder)
-        {
-            builder.HttpClientFactory(() =>
-            {
-                HttpMessageHandler httpMessageHandler = new HttpClientHandler()
-                {
-                    ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator,
-                };
-
-                return new HttpClient(httpMessageHandler);
-            });
-
-            builder.ConnectionMode(ConnectionMode.Gateway);
         }
 
         [HttpPost("add")]

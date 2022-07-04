@@ -13,6 +13,7 @@ namespace ServicesTestFramework.DatabaseContainers
         private MySqlTestcontainerConfiguration ContainerConfiguration { get; set; }
         private string MountSourceFolderName { get; set; }
         private string SnapshotPath { get; set; }
+        private string MySqlImageTagName { get; set; }
         private Dictionary<string, string> MysqlEntryPointParams { get; set; } = new Dictionary<string, string>();
 
         public MySqlContainerBuilder SetDatabaseConfiguration(string databaseName, string username, string password)
@@ -34,6 +35,17 @@ namespace ServicesTestFramework.DatabaseContainers
                 throw new ArgumentException("Source folder name can not be null or empty.", nameof(sourceFolderName));
 
             MountSourceFolderName = sourceFolderName;
+
+            return this;
+        }
+
+        /// <param name="imageTagName">E.g "mysql:8.0.18"</param>
+        public MySqlContainerBuilder SetImageTagName(string imageTagName)
+        {
+            if (string.IsNullOrWhiteSpace(imageTagName))
+                throw new ArgumentException($"{nameof(imageTagName)} can not be null or empty.", nameof(imageTagName));
+
+            MySqlImageTagName = imageTagName;
 
             return this;
         }
@@ -68,7 +80,7 @@ namespace ServicesTestFramework.DatabaseContainers
 
             PrepareMountSourceFolder(mountSourceFolder, SnapshotPath);
 
-            var mySqlContainer = MySqlContainer.InitializeContainer(ContainerConfiguration, mountSourceFolder, containerName, MysqlEntryPointParams);
+            var mySqlContainer = MySqlContainer.InitializeContainer(ContainerConfiguration, mountSourceFolder, containerName, MySqlImageTagName, MysqlEntryPointParams);
             await mySqlContainer.StartContainer();
 
             return mySqlContainer;

@@ -23,17 +23,21 @@ namespace ServicesTestFramework.DatabaseContainers.Containers
         private MySqlContainer()
         { }
 
-        public static MySqlContainer InitializeContainer(TestcontainerDatabaseConfiguration containerConfiguration, string mountSourceFolder, string containerName, IDictionary<string, string> additionalEntryPointParams = null)
+        public static MySqlContainer InitializeContainer(TestcontainerDatabaseConfiguration containerConfiguration, string mountSourceFolder, string containerName, string imageTagName = null, IDictionary<string, string> additionalEntryPointParams = null)
         {
             var entryPointParams = CombineEntryPointParams(additionalEntryPointParams);
             var mountSourcePath = Path.GetFullPath(mountSourceFolder);
 
-            var container = new TestcontainersBuilder<MySqlTestcontainer>()
+            var containerBuild = new TestcontainersBuilder<MySqlTestcontainer>()
                 .WithDatabase(containerConfiguration)
                 .WithName(containerName)
                 .WithBindMount(mountSourcePath, "/var/lib/mysql")
-                .WithEntrypoint(entryPointParams)
-                .Build();
+                .WithEntrypoint(entryPointParams);
+
+            if (imageTagName is not null)
+                containerBuild = containerBuild.WithImage(imageTagName);
+
+            var container = containerBuild.Build();
 
             return new MySqlContainer { Container = container, MountSourceFolder = mountSourceFolder };
         }

@@ -7,7 +7,7 @@ namespace ServicesTestFramework.WebAppTools.Tests.Common
 {
     public class ExceptionInterceptorTests : IDisposable
     {
-        private Exception ExpectedException { get; } = new CustomTestException("message", "additional data");
+        private Exception ExpectedException { get; } = new CustomTestException($"message-{DateTimeOffset.Now.Ticks}", "additional data");
 
         public ExceptionInterceptorTests()
         {
@@ -17,8 +17,6 @@ namespace ServicesTestFramework.WebAppTools.Tests.Common
         [Fact]
         public void ExceptionInterceptor_StoresExceptionThrownByTest()
         {
-            ExceptionInterceptor.LastCapturedException.Should().BeNull();
-
             try
             {
                 throw ExpectedException;
