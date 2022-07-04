@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data.Common;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using DotNet.Testcontainers.Builders;
 using DotNet.Testcontainers.Configurations;
@@ -22,17 +23,9 @@ namespace ServicesTestFramework.DatabaseContainers.Containers
         private MySqlContainer()
         { }
 
-        public static MySqlContainer InitializeContainer(TestcontainerDatabaseConfiguration containerConfiguration, string mountSourceFolder, string containerName)
+        public static MySqlContainer InitializeContainer(TestcontainerDatabaseConfiguration containerConfiguration, string mountSourceFolder, string containerName, IDictionary<string, string> additionalEntryPointParams = null)
         {
-            var entryPointParams = new List<string>
-            {
-                "docker-entrypoint.sh",
-                "--lower-case-table-names=1",
-                "--innodb-page-size=65536",
-                "--innodb-strict-mode=OFF",
-                "--sql-mode=NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION"
-            }.ToArray();
-
+            var entryPointParams = CombineEntryPointParams(additionalEntryPointParams);
             var mountSourcePath = Path.GetFullPath(mountSourceFolder);
 
             var container = new TestcontainersBuilder<MySqlTestcontainer>()
@@ -72,5 +65,33 @@ namespace ServicesTestFramework.DatabaseContainers.Containers
         }
 
         public bool IsRunning => Connection is not null;
+
+        private static string[] CombineEntryPointParams(IDictionary<string, string> additionalEntryPointParams)
+        {
+            var entryPointParams = new Dictionary<string, string>
+            {
+                { "lower-case-table-names", "1" },
+                { "innodb-page-size", "65536" },
+                { "innodb-strict-mode", "OFF" },
+                { "sql-mode", "NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION" },
+                { "innodb_file_per_table", "ON" },
+                { "log_bin_trust_function_creators", "ON" }
+            };
+
+            if (additionalEntryPointParams is not null)
+                foreach (var newParamKey in additionalEntryPointParams.Keys)
+                    entryPointParams[newParamKey] = additionalEntryPointParams[newParamKey];
+
+            var formattedParams = entryPointParams.Select(p => $"--{p.Key}={p.Value}").ToList();
+
+            var allParams = new List<string>
+            {
+                "docker-entrypoint.sh"
+            };
+
+            allParams.AddRange(formattedParams);
+
+            return allParams.ToArray();
+        }
     }
 }

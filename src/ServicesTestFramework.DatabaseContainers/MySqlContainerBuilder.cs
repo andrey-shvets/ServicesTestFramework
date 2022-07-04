@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using DotNet.Testcontainers.Configurations;
@@ -12,6 +13,7 @@ namespace ServicesTestFramework.DatabaseContainers
         private MySqlTestcontainerConfiguration ContainerConfiguration { get; set; }
         private string MountSourceFolderName { get; set; }
         private string SnapshotPath { get; set; }
+        private Dictionary<string, string> MysqlEntryPointParams { get; set; } = new Dictionary<string, string>();
 
         public MySqlContainerBuilder SetDatabaseConfiguration(string databaseName, string username, string password)
         {
@@ -46,6 +48,16 @@ namespace ServicesTestFramework.DatabaseContainers
             return this;
         }
 
+        public MySqlContainerBuilder WithMySqlParam(string key, string value)
+        {
+            if (string.IsNullOrWhiteSpace(key))
+                throw new ArgumentException($"{nameof(key)} can not be null or empty.", nameof(key));
+
+            MysqlEntryPointParams.Add(key, value);
+
+            return this;
+        }
+
         public async Task<MySqlContainer> StartContainer()
         {
             if (ContainerConfiguration is null)
@@ -56,7 +68,7 @@ namespace ServicesTestFramework.DatabaseContainers
 
             PrepareMountSourceFolder(mountSourceFolder, SnapshotPath);
 
-            var mySqlContainer = MySqlContainer.InitializeContainer(ContainerConfiguration, mountSourceFolder, containerName);
+            var mySqlContainer = MySqlContainer.InitializeContainer(ContainerConfiguration, mountSourceFolder, containerName, MysqlEntryPointParams);
             await mySqlContainer.StartContainer();
 
             return mySqlContainer;
