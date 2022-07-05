@@ -26,7 +26,8 @@ namespace ServicesTestFramework.DatabaseContainers.Tests.MigrationTests
         public async Task ApplyMigrations_AppliesScriptsFromProvidedFoldersInAscendingOrder()
         {
             var containerBuilder = new MySqlContainerBuilder()
-                .SetDatabaseConfiguration(DatabaseName, UserName, Password);
+                .SetDatabaseConfiguration(DatabaseName, UserName, Password)
+                .WithCleanup(enabled: true);
 
             TestContainer = await containerBuilder.StartContainer();
 

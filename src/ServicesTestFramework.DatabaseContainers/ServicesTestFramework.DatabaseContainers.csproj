@@ -7,6 +7,7 @@
 
   <ItemGroup>
     <PackageReference Include="DotNetZip" Version="1.16.0" />
+    <PackageReference Include="Ductus.FluentDocker" Version="2.10.55" />
     <PackageReference Include="Evolve" Version="3.0.0" />
     <PackageReference Include="MySqlConnector" Version="2.1.10" />
     <PackageReference Include="Testcontainers" Version="2.0.1" />

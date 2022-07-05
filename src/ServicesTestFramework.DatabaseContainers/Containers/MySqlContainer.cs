@@ -23,7 +23,7 @@ namespace ServicesTestFramework.DatabaseContainers.Containers
         private MySqlContainer()
         { }
 
-        public static MySqlContainer InitializeContainer(TestcontainerDatabaseConfiguration containerConfiguration, string mountSourceFolder, string containerName, string imageTagName = null, IDictionary<string, string> additionalEntryPointParams = null)
+        public static MySqlContainer InitializeContainer(TestcontainerDatabaseConfiguration containerConfiguration, string mountSourceFolder, string containerName, bool cleanupEnabled = true, string imageTagName = null, IDictionary<string, string> additionalEntryPointParams = null)
         {
             var entryPointParams = CombineEntryPointParams(additionalEntryPointParams);
             var mountSourcePath = Path.GetFullPath(mountSourceFolder);
@@ -32,7 +32,8 @@ namespace ServicesTestFramework.DatabaseContainers.Containers
                 .WithDatabase(containerConfiguration)
                 .WithName(containerName)
                 .WithBindMount(mountSourcePath, "/var/lib/mysql")
-                .WithEntrypoint(entryPointParams);
+                .WithEntrypoint(entryPointParams)
+                .WithCleanUp(cleanupEnabled);
 
             if (imageTagName is not null)
                 containerBuild = containerBuild.WithImage(imageTagName);
