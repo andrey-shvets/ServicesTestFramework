@@ -1,17 +1,18 @@
 ﻿using System;
 using System.Linq;
-using System.Text.RegularExpressions;
 using Ductus.FluentDocker.Commands;
-using Ductus.FluentDocker.Model.Containers;
-using Ductus.FluentDocker.Services;
 
-namespace ServicesTestFramework.DatabaseContainers
+namespace ServicesTestFramework.DatabaseContainers.Docker
 {
     public static class DockerTools
     {
-        public static void StopContainerIfRunning(string containerName)
+        /// <summary>
+        /// Stops and removes container with the name specified by <paramref name="containerName"/> if it exists
+        /// </summary>
+        /// <param name="containerName">Container name</param>
+        public static void RemoveContainerIfExists(string containerName)
         {
-            var dockerHost = DiscoverDockerHost();
+            var dockerHost = DockerHostTools.DiscoverDockerHost();
 
             if (dockerHost is null)
                 return;
@@ -26,12 +27,28 @@ namespace ServicesTestFramework.DatabaseContainers
             dockerHost.Host.RemoveContainer(containerInfo.Id, certificates: dockerHost.Certificates);
         }
 
+        /// <summary>
+        /// Checks if container exists
+        /// </summary>
+        /// <param name="containerName">Container name</param>
+        /// <returns>Returns true if container specified by <paramref name="containerName"/> exists (in any state), and if there is no container with such name - false</returns>
         public static bool ContainerExists(string containerName)
         {
-            var pattern = $"^{containerName}$";
-            var container = GetContainerByRegex(pattern);
+            var container = DockerHostTools.GetContainer(containerName);
 
             return container is not null;
+        }
+
+        /// <summary>
+        /// Checks if container exists and running, stopped containers considered not reusable too.
+        /// </summary>
+        /// <param name="containerName">Container name</param>
+        /// <returns>Returns true if container specified by <paramref name="containerName"/> is running.</returns>
+        public static bool ContainerIsReusable(string containerName)
+        {
+            var container = DockerHostTools.GetContainer(containerName);
+
+            return container is not null && container.State.Running;
         }
 
         public static int GetMysqlPortForContainer(string containerName)
@@ -43,7 +60,7 @@ namespace ServicesTestFramework.DatabaseContainers
 
         public static int GetMysqlPortForContainerByRegex(string pattern)
         {
-            var containerInfo = GetContainerByRegex(pattern);
+            var containerInfo = DockerHostTools.GetContainerByRegex(pattern);
 
             if (containerInfo is null)
                 throw new InvalidOperationException($"Couldn't find container with the name like '{pattern}', please check if it is running");
@@ -56,27 +73,6 @@ namespace ServicesTestFramework.DatabaseContainers
             var port = containerInfo!.NetworkSettings.Ports[mysqlPortKey].First().Port;
 
             return port;
-        }
-
-        private static Container GetContainerByRegex(string pattern)
-        {
-            var dockerHost = DiscoverDockerHost();
-
-            if (dockerHost is null)
-                return null;
-
-            var containers = dockerHost!.Host.InspectContainers(dockerHost.Certificates).Data;
-            var containerInfo = containers.FirstOrDefault(c => Regex.IsMatch(c.Name, pattern, RegexOptions.IgnoreCase));
-
-            return containerInfo;
-        }
-
-        private static IHostService DiscoverDockerHost()
-        {
-            var hosts = new Hosts().Discover();
-            var dockerHost = hosts.FirstOrDefault(x => x.IsNative) ?? hosts.FirstOrDefault(x => x.Name == "default");
-
-            return dockerHost;
         }
     }
 }

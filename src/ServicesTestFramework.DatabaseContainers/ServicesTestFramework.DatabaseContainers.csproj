@@ -11,6 +11,10 @@
     <PackageReference Include="Evolve" Version="3.0.0" />
     <PackageReference Include="MySqlConnector" Version="2.1.11" />
     <PackageReference Include="Testcontainers" Version="2.1.0" />
+
+	<AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
+	  <_Parameter1>ServicesTestFramework.DatabaseContainers.Tests</_Parameter1>
+	</AssemblyAttribute>
   </ItemGroup>
 
 </Project>

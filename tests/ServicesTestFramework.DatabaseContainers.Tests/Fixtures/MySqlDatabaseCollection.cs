@@ -5,6 +5,6 @@ namespace ServicesTestFramework.DatabaseContainers.Tests.Fixtures
     [CollectionDefinition(CollectionName)]
     public class MySqlDatabaseCollection : ICollectionFixture<MySqlDatabaseFixture>
     {
-        public const string CollectionName = nameof(MySqlDatabaseCollection);
+        public const string CollectionName = nameof(MySqlDatabaseFixture);
     }
 }

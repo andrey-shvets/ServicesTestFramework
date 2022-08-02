@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using FluentAssertions;
+using ServicesTestFramework.DatabaseContainers.Docker;
 using Xunit;
 
 namespace ServicesTestFramework.DatabaseContainers.Tests.ContainerTests
@@ -56,7 +57,7 @@ namespace ServicesTestFramework.DatabaseContainers.Tests.ContainerTests
         }
 
         [Fact]
-        public async Task StopContainerIfRunning_StopsSpecifiedContainer()
+        public async Task RemoveContainerIfExists_StopsSpecifiedContainer()
         {
             var containerName = $"testStopContainer_{DateTime.Now.Ticks}";
             _ = await new MySqlContainerBuilder()
@@ -65,10 +66,30 @@ namespace ServicesTestFramework.DatabaseContainers.Tests.ContainerTests
                     .StartContainer();
 
             DockerTools.ContainerExists(containerName).Should().BeTrue();
-            DockerTools.StopContainerIfRunning(containerName);
+            DockerTools.RemoveContainerIfExists(containerName);
             DockerTools.ContainerExists(containerName).Should().BeFalse();
 
-            DockerTools.StopContainerIfRunning(containerName);
+            DockerTools.RemoveContainerIfExists(containerName);
+        }
+
+        [Fact]
+        public async Task ContainerIsReusable_ReturnsTrueForRunningContainer()
+        {
+            var containerName = $"testReusableContainer_{DateTime.Now.Ticks}";
+            _ = await new MySqlContainerBuilder()
+                    .SetDatabaseConfiguration(DatabaseName, UserName, Password)
+                    .SetContainerName(containerName)
+                    .StartContainer();
+
+            DockerTools.ContainerIsReusable(containerName).Should().BeTrue();
+
+            DockerHostTools.StopContainer(containerName);
+
+            DockerTools.ContainerExists(containerName).Should().BeTrue();
+            DockerTools.ContainerIsReusable(containerName).Should().BeFalse();
+
+            DockerTools.RemoveContainerIfExists(containerName);
+            DockerTools.ContainerIsReusable(containerName).Should().BeFalse();
         }
     }
 }
