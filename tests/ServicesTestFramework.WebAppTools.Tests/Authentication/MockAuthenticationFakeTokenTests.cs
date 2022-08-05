@@ -63,5 +63,27 @@ namespace ServicesTestFramework.WebAppTools.Tests.Authentication
             Guid.TryParse(userIdValue, out var userId).Should().BeTrue();
             userId.Should().NotBe(Guid.Empty);
         }
+
+        [Fact]
+        public async Task FakeToken_WithUserId_SetsUserIdClaim()
+        {
+            var userIdKey = "UserId";
+            var userId = 42u;
+            var token = FakeToken.WithUserId(userId);
+            var actualUserId = await Client.GetClaimByType(userIdKey, token);
+
+            actualUserId.Should().Be(userId.ToString());
+        }
+
+        [Fact]
+        public async Task FakeToken_AndUserId_SetsUserIdClaim()
+        {
+            var userIdKey = "UserId";
+            var userId = 42u;
+            var token = FakeToken.WithJwtId().AndUserId(userId);
+            var actualUserId = await Client.GetClaimByType(userIdKey, token);
+
+            actualUserId.Should().Be(userId.ToString());
+        }
     }
 }

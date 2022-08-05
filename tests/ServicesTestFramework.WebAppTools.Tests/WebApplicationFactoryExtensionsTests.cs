@@ -44,7 +44,7 @@ namespace ServicesTestFramework.WebAppTools.Tests
             Environment.SetEnvironmentVariable("TestOptions:EnvironmentTestKey", "value");
 
             var client = WebAppBuilder
-                .AddConfiguration("appsettings.Test.json")
+                .AddConfiguration("appsettings.test.json")
                 .AddConfiguration("InMemoryConfig", "inMemoryValue")
                 .AddXUnitLogger(OutputHelper)
                 .CreateClient();
