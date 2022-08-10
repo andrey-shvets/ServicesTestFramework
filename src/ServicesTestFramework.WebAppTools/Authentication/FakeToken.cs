@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
+﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using ServicesTestFramework.WebAppTools.Authentication.Options;
@@ -22,7 +19,7 @@ namespace ServicesTestFramework.WebAppTools.Authentication
 
         public static FakeToken WithClaim(string claimType, string claimValue) => new FakeToken(new Claim(claimType, claimValue));
 
-        public static FakeToken WithClaim<T>(string claimType, T claimValue) => new FakeToken(new Claim(claimType, claimValue.ToString()));
+        public static FakeToken WithClaim<T>(string claimType, T claimValue) => new FakeToken(new Claim(claimType, claimValue?.ToString()));
 
         public static FakeToken WithClaim(string claimType) => WithClaim(claimType, string.Empty);
 

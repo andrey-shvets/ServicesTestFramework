@@ -1,11 +1,7 @@
 ﻿using System.Security.Claims;
 using Ardalis.Specification;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using ServicesTestFramework.ExampleApi.Configuration.Options;
@@ -21,10 +17,7 @@ namespace ServicesTestFramework.ExampleApi
     {
         public IConfiguration Configuration { get; }
 
-        public Startup(IConfiguration configuration)
-        {
-            Configuration = configuration;
-        }
+        public Startup(IConfiguration configuration) => Configuration = configuration;
 
         public void ConfigureServices(IServiceCollection services)
         {
@@ -80,7 +73,7 @@ namespace ServicesTestFramework.ExampleApi
             services.AddScoped(typeof(IRepositoryBase<>), typeof(CosmosDbRepository<>));
         }
 
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app)
         {
             app.UseDeveloperExceptionPage();
             app.UseSwagger();

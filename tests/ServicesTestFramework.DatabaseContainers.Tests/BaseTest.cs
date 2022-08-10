@@ -1,5 +1,4 @@
-﻿using System;
-using RestEase;
+﻿using RestEase;
 using ServicesTestFramework.WebAppTools.Exceptions;
 using Xunit.Abstractions;
 
@@ -24,6 +23,8 @@ namespace ServicesTestFramework.DatabaseContainers.Tests
             if (ExceptionInterceptor.LastCapturedException is ApiException apiException &&
                 !string.IsNullOrWhiteSpace(apiException.Content))
                 OutputHelper?.WriteLine($"ApiException content: {apiException.Content}");
+
+            GC.SuppressFinalize(this);
         }
     }
 }

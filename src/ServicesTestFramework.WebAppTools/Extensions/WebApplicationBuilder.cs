@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
@@ -86,7 +82,7 @@ namespace ServicesTestFramework.WebAppTools.Extensions
         }
 
         /// <summary>
-        /// Configures EntityFramework context <see cref="TContext"/> to connect to a named in-memory database.
+        /// Configures EntityFramework context <typeparamref name="TContext"/> to connect to a named in-memory database.
         /// </summary>
         public WebApplicationBuilder<TEntryPoint> SwapDbContextWithInMemoryDatabase<TContext>(string databaseName = null)
             where TContext : DbContext
@@ -107,7 +103,7 @@ namespace ServicesTestFramework.WebAppTools.Extensions
         }
 
         /// <summary>
-        /// Mocks authentication. Use in combination with <see cref="FakeToken"/>
+        /// Mocks authentication. Use in combination with <see cref="FakeToken"/>.
         /// </summary>
         /// <param name="authScheme">Authentication scheme to override.</param>
         public WebApplicationBuilder<TEntryPoint> AddMockAuthentication(string authScheme = JwtBearerDefaults.AuthenticationScheme)
@@ -118,7 +114,7 @@ namespace ServicesTestFramework.WebAppTools.Extensions
         }
 
         /// <summary>
-        /// Add/override webapp configuration value
+        /// Add/override webapp configuration value.
         /// </summary>
         public WebApplicationBuilder<TEntryPoint> AddConfiguration(string key, string value)
         {

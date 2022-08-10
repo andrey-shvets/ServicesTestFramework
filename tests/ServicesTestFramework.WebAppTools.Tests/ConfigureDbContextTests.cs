@@ -1,5 +1,4 @@
 ﻿using System.Net;
-using System.Threading.Tasks;
 using FluentAssertions;
 using ServicesTestFramework.ExampleApi;
 using ServicesTestFramework.ExampleApi.Repositories;
@@ -15,7 +14,8 @@ namespace ServicesTestFramework.WebAppTools.Tests
     {
         public ConfigureDbContextTests(ITestOutputHelper outputHelper)
             : base(outputHelper)
-        { }
+        {
+        }
 
         [Fact]
         public async Task Health_IsSuccessful_WithOKStatusCodeResponse()
@@ -46,7 +46,7 @@ namespace ServicesTestFramework.WebAppTools.Tests
             var entityIntValue = 42;
 
             var id = await cosmosDbClient.Add(entityName, entityIntValue);
-            var newEntity = await cosmosDbClient.Get(id);
+            var newEntity = await cosmosDbClient.GetElement(id);
 
             var expected = new TestDatabaseEntity(id, entityName, entityIntValue);
 

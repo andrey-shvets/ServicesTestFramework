@@ -1,6 +1,4 @@
-﻿using System;
-using System.Linq;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace ServicesTestFramework.WebAppTools.Extensions
@@ -91,7 +89,7 @@ namespace ServicesTestFramework.WebAppTools.Extensions
             var serviceScopeFactory = serviceProvider.GetService<IServiceScopeFactory>();
 
             if (serviceScopeFactory is null)
-                throw new Exception($"Failed to retrieve {nameof(IServiceScopeFactory)} from provided WebApplicationFactory.");
+                throw new InvalidOperationException($"Failed to retrieve {nameof(IServiceScopeFactory)} from provided WebApplicationFactory.");
 
             var serviceScope = serviceScopeFactory.CreateScope();
             return serviceScope.ServiceProvider.GetRequiredService<TService>();

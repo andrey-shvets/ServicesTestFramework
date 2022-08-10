@@ -1,15 +1,13 @@
-﻿using System;
-using System.Linq;
-using Ductus.FluentDocker.Commands;
+﻿using Ductus.FluentDocker.Commands;
 
 namespace ServicesTestFramework.DatabaseContainers.Docker
 {
     public static class DockerTools
     {
         /// <summary>
-        /// Stops and removes container with the name specified by <paramref name="containerName"/> if it exists
+        /// Stops and removes container with the name specified by <paramref name="containerName"/> if it exists.
         /// </summary>
-        /// <param name="containerName">Container name</param>
+        /// <param name="containerName">Container name.</param>
         public static void RemoveContainerIfExists(string containerName)
         {
             var dockerHost = DockerHostTools.DiscoverDockerHost();
@@ -28,10 +26,10 @@ namespace ServicesTestFramework.DatabaseContainers.Docker
         }
 
         /// <summary>
-        /// Checks if container exists
+        /// Checks if container exists.
         /// </summary>
-        /// <param name="containerName">Container name</param>
-        /// <returns>Returns true if container specified by <paramref name="containerName"/> exists (in any state), and if there is no container with such name - false</returns>
+        /// <param name="containerName">Container name.</param>
+        /// <returns>Returns true if container specified by <paramref name="containerName"/> exists (in any state), and if there is no container with such name - false.</returns>
         public static bool ContainerExists(string containerName)
         {
             var container = DockerHostTools.GetContainer(containerName);
@@ -42,7 +40,7 @@ namespace ServicesTestFramework.DatabaseContainers.Docker
         /// <summary>
         /// Checks if container exists and running, stopped containers considered not reusable too.
         /// </summary>
-        /// <param name="containerName">Container name</param>
+        /// <param name="containerName">Container name.</param>
         /// <returns>Returns true if container specified by <paramref name="containerName"/> is running.</returns>
         public static bool ContainerIsReusable(string containerName)
         {

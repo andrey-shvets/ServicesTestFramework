@@ -8,7 +8,8 @@ namespace ServicesTestFramework.ExampleApi.Repositories
         public DbSet<TestDatabaseEntity> TestDatabaseData => Set<TestDatabaseEntity>();
 
         public TestDatabaseContext(DbContextOptions<TestDatabaseContext> options) : base(options)
-        { }
+        {
+        }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

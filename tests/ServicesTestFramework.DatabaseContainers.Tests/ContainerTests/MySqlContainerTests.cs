@@ -1,6 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
-using Docker.DotNet;
+﻿using Docker.DotNet;
 using FluentAssertions;
 using MySqlConnector;
 using ServicesTestFramework.DatabaseContainers.Containers;
@@ -47,7 +45,9 @@ namespace ServicesTestFramework.DatabaseContainers.Tests.ContainerTests
             TestContainer = await containerBuilder.StartContainer();
 
             var stopContainerTask = TestContainer.StopContainer();
+#pragma warning disable VSTHRD103 // Call async methods when in an async method
             stopContainerTask.Wait();
+#pragma warning restore VSTHRD103 // Call async methods when in an async method
 
             var connection = new MySqlConnection(TestContainer.Connection.ConnectionString);
             Action openConnection = () => connection.Open();

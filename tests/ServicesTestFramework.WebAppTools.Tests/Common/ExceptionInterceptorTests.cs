@@ -1,5 +1,4 @@
-﻿using System;
-using FluentAssertions;
+﻿using FluentAssertions;
 using ServicesTestFramework.WebAppTools.Exceptions;
 using Xunit;
 
@@ -30,6 +29,8 @@ namespace ServicesTestFramework.WebAppTools.Tests.Common
         public void Dispose()
         {
             ExceptionInterceptor.LastCapturedException.Should().Be(ExpectedException);
+
+            GC.SuppressFinalize(this);
         }
 
         public class CustomTestException : Exception

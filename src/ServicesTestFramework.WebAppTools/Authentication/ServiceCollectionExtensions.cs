@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Reflection;
+﻿using System.Reflection;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.DependencyInjection;
@@ -13,9 +12,9 @@ namespace ServicesTestFramework.WebAppTools.Authentication.Extensions
     public static class ServiceCollectionExtensions
     {
         /// <summary>
-        /// Mocks authentication. Use in combination with <see cref="FakeToken"/>
+        /// Mocks authentication. Use in combination with <see cref="FakeToken"/>.
         /// </summary>
-        /// <param name="services"></param>
+        /// <param name="services">Reference to services collection.</param>
         /// <param name="authScheme">Authentication scheme to override.</param>
         public static IServiceCollection AddMockAuthentication(this IServiceCollection services, string authScheme = JwtBearerDefaults.AuthenticationScheme)
         {
@@ -53,7 +52,8 @@ namespace ServicesTestFramework.WebAppTools.Authentication.Extensions
 
             protected MockAuthenticationSchemeProvider(IOptions<AuthenticationOptions> options, IDictionary<string, AuthenticationScheme> schemes)
                 : base(options, schemes)
-            { }
+            {
+            }
 
             public override void AddScheme(AuthenticationScheme scheme)
             {

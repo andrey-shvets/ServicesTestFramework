@@ -1,6 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
-using Ardalis.Specification;
+﻿using Ardalis.Specification;
 using ServicesTestFramework.ExampleApi.Repositories.Entities;
 
 namespace ServicesTestFramework.ExampleApi.Repositories
@@ -12,7 +10,7 @@ namespace ServicesTestFramework.ExampleApi.Repositories
         public TestDatabaseService(
             IRepositoryBase<TestDatabaseEntity> testDatabaseEntityRepository)
         {
-            _testDatabaseEntityRepository = testDatabaseEntityRepository;
+            this._testDatabaseEntityRepository = testDatabaseEntityRepository;
         }
 
         public async Task<TestDatabaseEntity> Add(string name, int intData)

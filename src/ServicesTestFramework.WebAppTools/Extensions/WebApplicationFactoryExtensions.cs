@@ -1,6 +1,4 @@
-﻿using System;
-using System.Net.Http;
-using Microsoft.AspNetCore.Hosting;
+﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.Configuration;
@@ -16,7 +14,7 @@ namespace ServicesTestFramework.WebAppTools.Extensions
         /// <summary>
         /// Configure the webapp before running it locally.
         /// </summary>
-        /// <typeparam name="TStartup">Startup class of service under test</typeparam>
+        /// <typeparam name="TStartup">Startup class of service under test.</typeparam>
         /// <param name="factory">Application factory for service under test.</param>
         /// <param name="servicesConfiguration">Delegate for a method with any additional services configurations. Services can be added, deleted or swapped with mocks.</param>
         /// <param name="configureAppConfiguration">Delegate for configuring additional app configuration sources. `appsettings.json` and environment variables are added by default.</param>

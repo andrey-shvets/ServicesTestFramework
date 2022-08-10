@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Threading.Tasks;
-using DotNet.Testcontainers.Configurations;
+﻿using DotNet.Testcontainers.Configurations;
 using ServicesTestFramework.DatabaseContainers.Containers;
 using static ServicesTestFramework.DatabaseContainers.Helpers.FileSystemHelper;
 
@@ -48,7 +44,9 @@ namespace ServicesTestFramework.DatabaseContainers
             return this;
         }
 
-        /// <param name="imageTagName">E.g "mysql:8.0.18"</param>
+        /// <summary>
+        /// Sets image name. E.g "mysql:8.0.18".
+        /// </summary>
         public MySqlContainerBuilder SetImageTagName(string imageTagName)
         {
             if (string.IsNullOrWhiteSpace(imageTagName))

@@ -10,7 +10,7 @@ using Xunit.Abstractions;
 
 namespace ServicesTestFramework.DatabaseContainers.Tests
 {
-    [Collection(MySqlDatabaseCollection.CollectionName)]
+    [Collection(MySqlDatabaseCollectionFixture.CollectionName)]
     public class DatabaseExampleTest : IClassFixture<WebApplicationBuilder<Startup>>
     {
         private IDatabaseController DatabaseClient { get; }

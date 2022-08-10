@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data.Common;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Data.Common;
 using DotNet.Testcontainers.Builders;
 using DotNet.Testcontainers.Configurations;
 using DotNet.Testcontainers.Containers;
@@ -21,7 +16,8 @@ namespace ServicesTestFramework.DatabaseContainers.Containers
         public int HostPort { get; private set; }
 
         private MySqlContainer()
-        { }
+        {
+        }
 
         public static MySqlContainer InitializeContainer(TestcontainerDatabaseConfiguration containerConfiguration, string mountSourceFolder, string containerName, bool cleanupEnabled = true, string imageTagName = null, IDictionary<string, string> additionalEntryPointParams = null)
         {

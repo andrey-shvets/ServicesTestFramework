@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Reflection;
+﻿using System.Reflection;
 using Xunit.Abstractions;
 
 namespace ServicesTestFramework.WebAppTools.Extensions
@@ -30,7 +28,8 @@ namespace ServicesTestFramework.WebAppTools.Extensions
         public static bool HasTrait(this ITestOutputHelper testOutputHelper, string traitName, string value)
         {
             var hasTrait = testOutputHelper.Traits().TryGetValue(traitName, out var traitValues);
-            return hasTrait && traitValues.Contains(value);
+
+            return hasTrait && traitValues!.Contains(value);
         }
 
         private static FieldInfo GetTestMethod(this ITestOutputHelper testOutputHelper)
@@ -39,7 +38,7 @@ namespace ServicesTestFramework.WebAppTools.Extensions
             var testMember = testOutputType.GetField("test", BindingFlags.Instance | BindingFlags.NonPublic);
 
             if (testMember == null)
-                throw new($"Unable to find 'test' field on {testOutputType.FullName}");
+                throw new InvalidOperationException($"Unable to find 'test' field on {testOutputType.FullName}");
 
             return testMember;
         }
