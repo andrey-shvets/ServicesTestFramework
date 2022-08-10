@@ -20,8 +20,7 @@ namespace ServicesTestFramework.WebAppTools.Tests
 
         public virtual void Dispose()
         {
-            if (ExceptionInterceptor.LastCapturedException is ApiException apiException &&
-                !string.IsNullOrWhiteSpace(apiException.Content))
+            if (ExceptionInterceptor.LastCapturedException is ApiException apiException && !string.IsNullOrWhiteSpace(apiException.Content))
                 OutputHelper?.WriteLine($"ApiException content: {apiException.Content}");
 
             GC.SuppressFinalize(this);

@@ -1,9 +1,6 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Security.Claims;
+﻿using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
 using ServicesTestFramework.ExampleApi.Services.Interfaces;
 
 namespace ServicesTestFramework.ExampleApi.Controllers
@@ -11,7 +8,9 @@ namespace ServicesTestFramework.ExampleApi.Controllers
     [Route("[controller]")]
     public class FirstController : ControllerBase
     {
+#pragma warning disable IDE0052 // Remove unread private members
         private IConfiguration Configuration { get; }
+#pragma warning restore IDE0052 // Remove unread private members
         private ITestScopedService TestScopedServiceInstance { get; }
         private ITestSingletonService TestSingletonServiceInstance { get; }
         private ITestTransientService TestTransientServiceInstance { get; }

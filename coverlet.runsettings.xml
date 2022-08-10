@@ -9,7 +9,7 @@
 					<!-- [Assembly-Filter]Type-Filter -->
 					<Include>[ServicesTestFramework.WebAppTools]*,[ServicesTestFramework.DatabaseContainers]*</Include>
 					<!-- [Assembly-Filter]Type-Filter -->
-					<ExcludeByAttribute>Obsolete,GeneratedCodeAttribute,CompilerGeneratedAttribute</ExcludeByAttribute>
+					<ExcludeByAttribute>Obsolete,GeneratedCodeAttribute</ExcludeByAttribute>
 					<SingleHit>false</SingleHit>
 					<UseSourceLink>true</UseSourceLink>
 					<IncludeTestAssembly>false</IncludeTestAssembly>

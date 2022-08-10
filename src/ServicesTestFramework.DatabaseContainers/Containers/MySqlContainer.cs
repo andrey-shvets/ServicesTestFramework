@@ -80,8 +80,10 @@ namespace ServicesTestFramework.DatabaseContainers.Containers
             };
 
             if (additionalEntryPointParams is not null)
+            {
                 foreach (var newParamKey in additionalEntryPointParams.Keys)
                     entryPointParams[newParamKey] = additionalEntryPointParams[newParamKey];
+            }
 
             var formattedParams = entryPointParams.Select(p => $"--{p.Key}={p.Value}").ToList();
 

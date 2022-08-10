@@ -4,8 +4,7 @@
 		<TargetFramework>net6.0</TargetFramework>
 		<IsPackable>false</IsPackable>
 		<ImplicitUsings>enable</ImplicitUsings>
-		<EnforceCodeStyleInBuild>false</EnforceCodeStyleInBuild>
-		<EnableNETAnalyzers>true</EnableNETAnalyzers>
+		<EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
 		<AnalysisLevel>latest-Recommended</AnalysisLevel>
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
 	</PropertyGroup>

@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data.Common;
-using System.IO;
-using System.Threading.Tasks;
+﻿using System.Data.Common;
 using Microsoft.Extensions.Configuration;
 using MySqlConnector;
 using ServicesTestFramework.DatabaseContainers.Docker;
@@ -30,7 +26,7 @@ namespace ServicesTestFramework.DatabaseContainers.Tests.Fixtures
             else
                 Connection = ConnectToContainer(environment) ?? await CreateContainer(environment);
 
-            ApplyMigrations(Connection, environment);
+            ApplyMigrations(Connection);
         }
 
         private static DbConnection ConnectToContainer(TestEnvironmentOptions environment)
@@ -70,7 +66,7 @@ namespace ServicesTestFramework.DatabaseContainers.Tests.Fixtures
             return container.Connection;
         }
 
-        private static void ApplyMigrations(DbConnection connection, TestEnvironmentOptions environment)
+        private static void ApplyMigrations(DbConnection connection)
         {
             var migrationLocation = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, SqlScriptsLocation));
             var placeholders = new Dictionary<string, string> { ["${Scenario}"] = DefaultScenarioPlaceholder };

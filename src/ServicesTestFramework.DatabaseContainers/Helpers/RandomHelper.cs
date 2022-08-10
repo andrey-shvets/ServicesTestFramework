@@ -1,11 +1,8 @@
-﻿using System;
-
-namespace ServicesTestFramework.DatabaseContainers.Helpers
+﻿namespace ServicesTestFramework.DatabaseContainers.Helpers
 {
     internal static class RandomHelper
     {
         private const string AlphanumericChars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
-        private const string AlphabeticChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
 
         private static Random RandomGenerator { get; } = new Random((int)DateTimeOffset.Now.Ticks);
 

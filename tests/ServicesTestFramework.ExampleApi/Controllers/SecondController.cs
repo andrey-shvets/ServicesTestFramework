@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
 using ServicesTestFramework.ExampleApi.Repositories.Interfaces;
 using ServicesTestFramework.ExampleApi.Services.Interfaces;
 
@@ -12,9 +11,12 @@ namespace ServicesTestFramework.ExampleApi.Controllers
         private ITestScopedService TestScopedServiceInstance { get; }
         private ITestSingletonService TestSingletonServiceInstance { get; }
         private ITestTransientService TestTransientServiceInstance { get; }
+#pragma warning disable IDE0052 // Remove unread private members
         private ITestDao TestDao { get; }
+#pragma warning restore IDE0052 // Remove unread private members
 
-        public SecondController(IConfiguration configuration,
+        public SecondController(
+            IConfiguration configuration,
             ITestScopedService testScopedService,
             ITestSingletonService testSingletonService,
             ITestTransientService testTransientService,
