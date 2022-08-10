@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<RunSettings>
+	<DataCollectionRunSettings>
+		<DataCollectors>
+			<DataCollector friendlyName="XPlat code coverage">
+				<Configuration>
+					<Format>json,cobertura</Format>
+					<Exclude>[ServicesTestFramework.*.*Test?]*,[ServicesTestFramework.ExampleApi]*,*Startup,*Options</Exclude>
+					<!-- [Assembly-Filter]Type-Filter -->
+					<Include>[ServicesTestFramework.WebAppTools]*,[ServicesTestFramework.DatabaseContainers]*</Include>
+					<!-- [Assembly-Filter]Type-Filter -->
+					<ExcludeByAttribute>Obsolete,GeneratedCodeAttribute,CompilerGeneratedAttribute</ExcludeByAttribute>
+					<SingleHit>false</SingleHit>
+					<UseSourceLink>true</UseSourceLink>
+					<IncludeTestAssembly>false</IncludeTestAssembly>
+					<SkipAutoProps>true</SkipAutoProps>
+					<DeterministicReport>false</DeterministicReport>
+				</Configuration>
+			</DataCollector>
+		</DataCollectors>
+	</DataCollectionRunSettings>
+</RunSettings>

@@ -52,7 +52,21 @@ steps:
     inputs:
       command: 'test'
       projects: $(testProjectsFilter)
-      arguments: '--configuration ${{ parameters.buildConfiguration }}'
+      arguments: '--configuration ${{ parameters.buildConfiguration }} --collect:"XPlat Code Coverage" --settings "./coverlet.runsettings.xml"' 
+
+  - task: ReportGenerator@5
+    displayName: 'Merge code coverage reports'
+    inputs:
+      reports: '$(Agent.TempDirectory)/**/coverage.cobertura.xml'
+      targetdir: '$(Pipeline.Workspace)/coverlet'
+      reportTypes: 'Cobertura'
+      verbosity: 'Verbose'
+
+  - task: PublishCodeCoverageResults@1
+    displayName: Publish Coverage Report
+    inputs:
+      codeCoverageTool: Cobertura
+      summaryFileLocation: $(Pipeline.Workspace)/coverlet/Cobertura.xml
 
   - task: NuGetToolInstaller@1
     displayName: Configure NuGet
