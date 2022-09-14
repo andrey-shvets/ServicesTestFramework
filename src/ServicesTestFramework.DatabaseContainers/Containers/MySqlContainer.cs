@@ -85,7 +85,7 @@ namespace ServicesTestFramework.DatabaseContainers.Containers
                     entryPointParams[newParamKey] = additionalEntryPointParams[newParamKey];
             }
 
-            var formattedParams = entryPointParams.Select(p => $"--{p.Key}={p.Value}").ToList();
+            var formattedParams = entryPointParams.Select(p => ToMySqlParam(p.Key, p.Value)).ToList();
 
             var allParams = new List<string>
             {
@@ -96,5 +96,7 @@ namespace ServicesTestFramework.DatabaseContainers.Containers
 
             return allParams.ToArray();
         }
+
+        private static string ToMySqlParam(string key, string value) => string.IsNullOrEmpty(value) ? $"--{key}" : $"--{key}={value}";
     }
 }

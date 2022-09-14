@@ -77,6 +77,8 @@ namespace ServicesTestFramework.DatabaseContainers
             return this;
         }
 
+        public MySqlContainerBuilder WithMySqlParam(string key) => WithMySqlParam(key, null);
+
         public MySqlContainerBuilder WithCleanup(bool enabled)
         {
             CleanupEnabled = enabled;
