@@ -2,14 +2,18 @@
 {
     public static class ExceptionInterceptor
     {
-        private static ThreadLocal<Exception> CurrentTestExceptionHandler { get; } = new ThreadLocal<Exception>();
-        public static Exception LastCapturedException => CurrentTestExceptionHandler.Value;
+        private static ThreadLocal<Exception> CurrentThreadTestExceptionHandler { get; } = new ThreadLocal<Exception>(trackAllValues: true);
+        public static Exception LastCapturedException => CurrentThreadTestExceptionHandler.Value ??
+                                                         CurrentThreadTestExceptionHandler.Values.FirstOrDefault(v => v is not null);
 
         public static void InitializeExceptionCapture()
         {
             AppDomain.CurrentDomain.FirstChanceException += (_, e) =>
             {
-                CurrentTestExceptionHandler.Value = e.Exception;
+                if (Equals(CurrentThreadTestExceptionHandler.Value, e.Exception))
+                    return;
+
+                CurrentThreadTestExceptionHandler.Value = e.Exception;
             };
         }
     }

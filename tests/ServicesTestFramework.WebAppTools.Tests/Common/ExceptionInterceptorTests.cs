@@ -8,10 +8,7 @@ namespace ServicesTestFramework.WebAppTools.Tests.Common
     {
         private Exception ExpectedException { get; } = new CustomTestException($"message-{DateTimeOffset.Now.Ticks}", "additional data");
 
-        public ExceptionInterceptorTests()
-        {
-            ExceptionInterceptor.InitializeExceptionCapture();
-        }
+        public ExceptionInterceptorTests() => ExceptionInterceptor.InitializeExceptionCapture();
 
         [Fact]
         public void ExceptionInterceptor_StoresExceptionThrownByTest()
@@ -21,9 +18,28 @@ namespace ServicesTestFramework.WebAppTools.Tests.Common
                 throw ExpectedException;
             }
             catch
+            { }
+
+            ExceptionInterceptor.LastCapturedException.Should().Be(ExpectedException);
+        }
+
+        [Fact]
+        public async Task ExceptionInterceptor_StoresExceptionThrownByAsyncMethod()
+        {
+            await ExceptionThrower(ExpectedException);
+
+            ExceptionInterceptor.LastCapturedException.Should().Be(ExpectedException);
+        }
+
+        private static async Task ExceptionThrower(Exception expectedException)
+        {
+            await Task.CompletedTask;
+
+            try
             {
-                ExceptionInterceptor.LastCapturedException.Should().Be(ExpectedException);
+                throw expectedException;
             }
+            catch { }
         }
 
         public void Dispose()
@@ -38,9 +54,7 @@ namespace ServicesTestFramework.WebAppTools.Tests.Common
             public string AdditionalData { get; }
 
             public CustomTestException(string message, string additionalData) : base(message)
-            {
-                AdditionalData = additionalData;
-            }
+                => AdditionalData = additionalData;
         }
     }
 }
