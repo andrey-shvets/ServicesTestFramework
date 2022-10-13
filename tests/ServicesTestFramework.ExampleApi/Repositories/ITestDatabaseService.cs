@@ -1,6 +1,5 @@
-﻿namespace ServicesTestFramework.ExampleApi.Repositories
+﻿namespace ServicesTestFramework.ExampleApi.Repositories;
+
+public interface ITestDatabaseService
 {
-    public interface ITestDatabaseService
-    {
-    }
 }

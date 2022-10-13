@@ -6,83 +6,82 @@ using FluentAssertions;
 using ServicesTestFramework.DatabaseContainers.Containers;
 using Xunit;
 
-namespace ServicesTestFramework.DatabaseContainers.Tests.MigrationTests
+namespace ServicesTestFramework.DatabaseContainers.Tests.MigrationTests;
+
+public class DatabaseMigrationTests : IAsyncLifetime
 {
-    public class DatabaseMigrationTests : IAsyncLifetime
+    private const string DatabaseName = "testdb";
+    private const string UserName = "testUser";
+    private const string Password = "123456789";
+    private const string DefaultScenarioPlaceholder = "First";
+    private const string SqlScriptsLocation = "Database";
+
+    private MySqlContainer TestContainer { get; set; }
+
+    public Task InitializeAsync() => Task.CompletedTask;
+
+    public async Task DisposeAsync() => await TestContainer.StopContainer();
+
+    [Fact]
+    public async Task ApplyMigrations_AppliesScriptsFromProvidedFoldersInAscendingOrder()
     {
-        private const string DatabaseName = "testdb";
-        private const string UserName = "testUser";
-        private const string Password = "123456789";
-        private const string DefaultScenarioPlaceholder = "First";
-        private const string SqlScriptsLocation = "Database";
+        var containerBuilder = new MySqlContainerBuilder()
+            .SetDatabaseConfiguration(DatabaseName, UserName, Password)
+            .WithCleanup(enabled: true);
 
-        private MySqlContainer TestContainer { get; set; }
+        TestContainer = await containerBuilder.StartContainer();
 
-        public Task InitializeAsync() => Task.CompletedTask;
+        var migrationLocation = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, SqlScriptsLocation));
+        var placeholders = new Dictionary<string, string> { ["${Scenario}"] = DefaultScenarioPlaceholder };
 
-        public async Task DisposeAsync() => await TestContainer.StopContainer();
+        var appliedMigrations = TestContainer.Connection.ApplyMigrations(placeholders, migrationLocation);
 
-        [Fact]
-        public async Task ApplyMigrations_AppliesScriptsFromProvidedFoldersInAscendingOrder()
-        {
-            var containerBuilder = new MySqlContainerBuilder()
-                .SetDatabaseConfiguration(DatabaseName, UserName, Password)
-                .WithCleanup(enabled: true);
+        appliedMigrations.Should().NotBeNullOrEmpty();
+        appliedMigrations.Should().HaveCount(13);
+        appliedMigrations.Should().StartWith("v0_0_0_001__firstTable.sql");
+        appliedMigrations.Should().EndWith("v2_0_0_0001__init_data.sql");
+        appliedMigrations.Should().BeInAscendingOrder();
+    }
 
-            TestContainer = await containerBuilder.StartContainer();
+    [Fact]
+    public async Task ApplyMigrations_UsingSnapshotWithAllMigrations_DoesNotApplyAnyAdditionalMigrations()
+    {
+        var containerBuilder = new MySqlContainerBuilder()
+            .SetDatabaseConfiguration(DatabaseName, UserName, Password);
 
-            var migrationLocation = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, SqlScriptsLocation));
-            var placeholders = new Dictionary<string, string> { ["${Scenario}"] = DefaultScenarioPlaceholder };
+        var snapshotPath = Path.Combine(AppContext.BaseDirectory, SqlScriptsLocation, "data-snapshot-all.zip");
+        containerBuilder.SetDatabaseSnapshot(snapshotPath);
 
-            var appliedMigrations = TestContainer.Connection.ApplyMigrations(placeholders, migrationLocation);
+        TestContainer = await containerBuilder.StartContainer();
 
-            appliedMigrations.Should().NotBeNullOrEmpty();
-            appliedMigrations.Should().HaveCount(13);
-            appliedMigrations.Should().StartWith("v0_0_0_001__firstTable.sql");
-            appliedMigrations.Should().EndWith("v2_0_0_0001__init_data.sql");
-            appliedMigrations.Should().BeInAscendingOrder();
-        }
+        var migrationLocation = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, SqlScriptsLocation));
+        var placeholders = new Dictionary<string, string> { ["${Scenario}"] = DefaultScenarioPlaceholder };
 
-        [Fact]
-        public async Task ApplyMigrations_UsingSnapshotWithAllMigrations_DoesNotApplyAnyAdditionalMigrations()
-        {
-            var containerBuilder = new MySqlContainerBuilder()
-                .SetDatabaseConfiguration(DatabaseName, UserName, Password);
+        var appliedMigrations = TestContainer.Connection.ApplyMigrations(placeholders, migrationLocation);
 
-            var snapshotPath = Path.Combine(AppContext.BaseDirectory, SqlScriptsLocation, "data-snapshot-all.zip");
-            containerBuilder.SetDatabaseSnapshot(snapshotPath);
+        appliedMigrations.Should().BeEmpty();
+    }
 
-            TestContainer = await containerBuilder.StartContainer();
+    [Fact]
+    public async Task ApplyMigrations_UsingSnapshot_ApplesOnlyNewMigrations()
+    {
+        var containerBuilder = new MySqlContainerBuilder()
+            .SetDatabaseConfiguration(DatabaseName, UserName, Password);
 
-            var migrationLocation = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, SqlScriptsLocation));
-            var placeholders = new Dictionary<string, string> { ["${Scenario}"] = DefaultScenarioPlaceholder };
+        var snapshotPath = Path.Combine(AppContext.BaseDirectory, SqlScriptsLocation, "data-snapshot.zip");
+        containerBuilder.SetDatabaseSnapshot(snapshotPath);
 
-            var appliedMigrations = TestContainer.Connection.ApplyMigrations(placeholders, migrationLocation);
+        TestContainer = await containerBuilder.StartContainer();
 
-            appliedMigrations.Should().BeEmpty();
-        }
+        var migrationLocation = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, SqlScriptsLocation));
+        var placeholders = new Dictionary<string, string> { ["${Scenario}"] = DefaultScenarioPlaceholder };
 
-        [Fact]
-        public async Task ApplyMigrations_UsingSnapshot_ApplesOnlyNewMigrations()
-        {
-            var containerBuilder = new MySqlContainerBuilder()
-                .SetDatabaseConfiguration(DatabaseName, UserName, Password);
+        var appliedMigrations = TestContainer.Connection.ApplyMigrations(placeholders, migrationLocation);
 
-            var snapshotPath = Path.Combine(AppContext.BaseDirectory, SqlScriptsLocation, "data-snapshot.zip");
-            containerBuilder.SetDatabaseSnapshot(snapshotPath);
-
-            TestContainer = await containerBuilder.StartContainer();
-
-            var migrationLocation = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, SqlScriptsLocation));
-            var placeholders = new Dictionary<string, string> { ["${Scenario}"] = DefaultScenarioPlaceholder };
-
-            var appliedMigrations = TestContainer.Connection.ApplyMigrations(placeholders, migrationLocation);
-
-            appliedMigrations.Should().NotBeNullOrEmpty();
-            appliedMigrations.Should().HaveCount(3);
-            appliedMigrations.Should().StartWith("v1_0_0_0002__hotfix_too_many_tables.sql");
-            appliedMigrations.Should().EndWith("v2_0_0_0001__init_data.sql");
-            appliedMigrations.Should().BeInAscendingOrder();
-        }
+        appliedMigrations.Should().NotBeNullOrEmpty();
+        appliedMigrations.Should().HaveCount(3);
+        appliedMigrations.Should().StartWith("v1_0_0_0002__hotfix_too_many_tables.sql");
+        appliedMigrations.Should().EndWith("v2_0_0_0001__init_data.sql");
+        appliedMigrations.Should().BeInAscendingOrder();
     }
 }

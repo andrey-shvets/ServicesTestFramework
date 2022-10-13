@@ -1,7 +1,6 @@
-﻿namespace ServicesTestFramework.ExampleApi.Services.Interfaces
+﻿namespace ServicesTestFramework.ExampleApi.Services.Interfaces;
+
+public interface ITestTransientService
 {
-    public interface ITestTransientService
-    {
-        string GetServiceName();
-    }
+    string GetServiceName();
 }

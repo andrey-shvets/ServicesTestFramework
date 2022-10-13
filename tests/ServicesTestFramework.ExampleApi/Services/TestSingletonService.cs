@@ -1,9 +1,8 @@
 ﻿using ServicesTestFramework.ExampleApi.Services.Interfaces;
 
-namespace ServicesTestFramework.ExampleApi.Services
+namespace ServicesTestFramework.ExampleApi.Services;
+
+public class TestSingletonService : ITestSingletonService
 {
-    public class TestSingletonService : ITestSingletonService
-    {
-        public string GetServiceName() => "actualSingletonService";
-    }
+    public string GetServiceName() => "actualSingletonService";
 }

@@ -1,9 +1,8 @@
 ﻿using ServicesTestFramework.ExampleApi.Services.Interfaces;
 
-namespace ServicesTestFramework.ExampleApi.Services
+namespace ServicesTestFramework.ExampleApi.Services;
+
+public class TestScopedService : ITestScopedService
 {
-    public class TestScopedService : ITestScopedService
-    {
-        public string GetServiceName() => "actualScopedService";
-    }
+    public string GetServiceName() => "actualScopedService";
 }

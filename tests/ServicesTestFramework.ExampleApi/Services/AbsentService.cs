@@ -1,11 +1,10 @@
 ﻿using ServicesTestFramework.ExampleApi.Services.Interfaces;
 
-namespace ServicesTestFramework.ExampleApi.Services
+namespace ServicesTestFramework.ExampleApi.Services;
+
+public class AbsentService : IAbsentService
 {
-    public class AbsentService : IAbsentService
+    public void DoStuff()
     {
-        public void DoStuff()
-        {
-        }
     }
 }

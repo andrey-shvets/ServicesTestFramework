@@ -1,43 +1,42 @@
 ﻿using ServicesTestFramework.DatabaseContainers.Containers;
 using static ServicesTestFramework.DatabaseContainers.Helpers.RandomHelper;
 
-namespace ServicesTestFramework.DatabaseContainers
+namespace ServicesTestFramework.DatabaseContainers;
+
+public static class DatabaseContainerPool
 {
-    public static class DatabaseContainerPool
+    private const string MountSourcePrefix = "mySqlDB";
+
+    public static HashSet<MySqlContainer> Containers { get; } = new HashSet<MySqlContainer>();
+
+    public static int RandomPort(int minValue = 5000)
     {
-        private const string MountSourcePrefix = "mySqlDB";
-
-        public static HashSet<MySqlContainer> Containers { get; } = new HashSet<MySqlContainer>();
-
-        public static int RandomPort(int minValue = 5000)
+        for (; ; )
         {
-            for (; ; )
-            {
-                var port = RandomNumber(minValue);
+            var port = RandomNumber(minValue);
 
-                if (Containers.Any(c => c.HostPort == port))
-                    continue;
+            if (Containers.Any(c => c.HostPort == port))
+                continue;
 
-                return port;
-            }
+            return port;
         }
+    }
 
-        public static string RandomMountSourceFolder(string prefix = MountSourcePrefix)
+    public static string RandomMountSourceFolder(string prefix = MountSourcePrefix)
+    {
+        for (; ; )
         {
-            for (; ; )
-            {
-                var folderName = $"{prefix}_{RandomString()}";
+            var folderName = $"{prefix}_{RandomString()}";
 
-                if (DoesFolderHaveBoundContainer(folderName))
-                    continue;
+            if (DoesFolderHaveBoundContainer(folderName))
+                continue;
 
-                return folderName;
-            }
+            return folderName;
         }
+    }
 
-        public static bool DoesFolderHaveBoundContainer(string folder)
-        {
-            return Directory.Exists(folder) && Containers.Any(c => Path.GetFullPath(c.MountSourceFolder) == Path.GetFullPath(folder));
-        }
+    public static bool DoesFolderHaveBoundContainer(string folder)
+    {
+        return Directory.Exists(folder) && Containers.Any(c => Path.GetFullPath(c.MountSourceFolder) == Path.GetFullPath(folder));
     }
 }

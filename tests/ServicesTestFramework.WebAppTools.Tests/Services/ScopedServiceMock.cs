@@ -1,9 +1,8 @@
 ﻿using ServicesTestFramework.ExampleApi.Services.Interfaces;
 
-namespace ServicesTestFramework.WebAppTools.Tests.Services
+namespace ServicesTestFramework.WebAppTools.Tests.Services;
+
+public class ScopedServiceMock : ITestScopedService
 {
-    public class ScopedServiceMock : ITestScopedService
-    {
-        public string GetServiceName() => "mockScopedService";
-    }
+    public string GetServiceName() => "mockScopedService";
 }

@@ -1,7 +1,6 @@
-﻿namespace ServicesTestFramework.ExampleApi.Services.Interfaces
+﻿namespace ServicesTestFramework.ExampleApi.Services.Interfaces;
+
+public interface IMultipleImplementationsService
 {
-    public interface IMultipleImplementationsService
-    {
-        string GetServiceName();
-    }
+    string GetServiceName();
 }

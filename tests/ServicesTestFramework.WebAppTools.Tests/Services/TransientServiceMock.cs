@@ -1,9 +1,8 @@
 ﻿using ServicesTestFramework.ExampleApi.Services.Interfaces;
 
-namespace ServicesTestFramework.WebAppTools.Tests.Services
+namespace ServicesTestFramework.WebAppTools.Tests.Services;
+
+public class TransientServiceMock : ITestTransientService
 {
-    public class TransientServiceMock : ITestTransientService
-    {
-        public string GetServiceName() => "mockTransientService";
-    }
+    public string GetServiceName() => "mockTransientService";
 }

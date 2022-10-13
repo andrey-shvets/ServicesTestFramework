@@ -1,11 +1,10 @@
-﻿namespace ServicesTestFramework.ExampleApi.Configuration.Options
-{
-    public class CosmosDbOptions
-    {
-        public const string SectionKey = "CosmosDb";
+﻿namespace ServicesTestFramework.ExampleApi.Configuration.Options;
 
-        public string AccountEndpoint { get; set; } = string.Empty;
-        public string AccountKey { get; set; } = string.Empty;
-        public bool IsLocal => AccountEndpoint.Contains("localhost");
-    }
+public class CosmosDbOptions
+{
+    public const string SectionKey = "CosmosDb";
+
+    public string AccountEndpoint { get; set; } = string.Empty;
+    public string AccountKey { get; set; } = string.Empty;
+    public bool IsLocal => AccountEndpoint.Contains("localhost");
 }

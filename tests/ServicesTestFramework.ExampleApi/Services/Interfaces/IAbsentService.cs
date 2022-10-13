@@ -1,7 +1,6 @@
-﻿namespace ServicesTestFramework.ExampleApi.Services.Interfaces
+﻿namespace ServicesTestFramework.ExampleApi.Services.Interfaces;
+
+public interface IAbsentService
 {
-    public interface IAbsentService
-    {
-        void DoStuff();
-    }
+    void DoStuff();
 }

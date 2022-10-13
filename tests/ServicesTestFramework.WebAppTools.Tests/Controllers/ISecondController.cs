@@ -2,25 +2,24 @@
 using System.Threading.Tasks;
 using RestEase;
 
-namespace ServicesTestFramework.WebAppTools.Tests.Controllers
+namespace ServicesTestFramework.WebAppTools.Tests.Controllers;
+
+[BasePath("second")]
+public interface ISecondController
 {
-    [BasePath("second")]
-    public interface ISecondController
-    {
-        [Get("getScopedServiceName")]
-        Task<string> GetScopedServiceName();
+    [Get("getScopedServiceName")]
+    Task<string> GetScopedServiceName();
 
-        [Get("getSingletonServiceName")]
-        Task<string> GetSingletonServiceName();
+    [Get("getSingletonServiceName")]
+    Task<string> GetSingletonServiceName();
 
-        [Get("getTransientServiceName")]
-        Task<string> GetTransientServiceName();
+    [Get("getTransientServiceName")]
+    Task<string> GetTransientServiceName();
 
-        [Get("getConfigValue")]
-        Task<string> GetConfigValue([Query] string configKey);
+    [Get("getConfigValue")]
+    Task<string> GetConfigValue([Query] string configKey);
 
-        [Get("health")]
-        [AllowAnyStatusCode]
-        Task<HttpResponseMessage> Health();
-    }
+    [Get("health")]
+    [AllowAnyStatusCode]
+    Task<HttpResponseMessage> Health();
 }

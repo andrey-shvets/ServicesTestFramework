@@ -1,7 +1,6 @@
-﻿namespace ServicesTestFramework.ExampleApi.Services.Interfaces
+﻿namespace ServicesTestFramework.ExampleApi.Services.Interfaces;
+
+public interface ITestScopedService
 {
-    public interface ITestScopedService
-    {
-        public string GetServiceName();
-    }
+    public string GetServiceName();
 }

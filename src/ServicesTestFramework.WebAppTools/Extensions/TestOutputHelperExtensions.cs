@@ -1,46 +1,45 @@
 ﻿using System.Reflection;
 using Xunit.Abstractions;
 
-namespace ServicesTestFramework.WebAppTools.Extensions
+namespace ServicesTestFramework.WebAppTools.Extensions;
+
+public static class TestOutputHelperExtensions
 {
-    public static class TestOutputHelperExtensions
+    public static string TestName(this ITestOutputHelper testOutputHelper)
     {
-        public static string TestName(this ITestOutputHelper testOutputHelper)
-        {
-            if (testOutputHelper == null)
-                throw new ArgumentNullException(nameof(testOutputHelper));
+        if (testOutputHelper == null)
+            throw new ArgumentNullException(nameof(testOutputHelper));
 
-            var test = (ITest)testOutputHelper.GetTestMethod().GetValue(testOutputHelper);
+        var test = (ITest)testOutputHelper.GetTestMethod().GetValue(testOutputHelper);
 
-            return test!.TestCase.TestMethod.Method.Name;
-        }
+        return test!.TestCase.TestMethod.Method.Name;
+    }
 
-        public static Dictionary<string, List<string>> Traits(this ITestOutputHelper testOutputHelper)
-        {
-            if (testOutputHelper == null)
-                throw new ArgumentNullException(nameof(testOutputHelper));
+    public static Dictionary<string, List<string>> Traits(this ITestOutputHelper testOutputHelper)
+    {
+        if (testOutputHelper == null)
+            throw new ArgumentNullException(nameof(testOutputHelper));
 
-            var test = (ITest)testOutputHelper.GetTestMethod().GetValue(testOutputHelper);
+        var test = (ITest)testOutputHelper.GetTestMethod().GetValue(testOutputHelper);
 
-            return test!.TestCase.Traits;
-        }
+        return test!.TestCase.Traits;
+    }
 
-        public static bool HasTrait(this ITestOutputHelper testOutputHelper, string traitName, string value)
-        {
-            var hasTrait = testOutputHelper.Traits().TryGetValue(traitName, out var traitValues);
+    public static bool HasTrait(this ITestOutputHelper testOutputHelper, string traitName, string value)
+    {
+        var hasTrait = testOutputHelper.Traits().TryGetValue(traitName, out var traitValues);
 
-            return hasTrait && traitValues!.Contains(value);
-        }
+        return hasTrait && traitValues!.Contains(value);
+    }
 
-        private static FieldInfo GetTestMethod(this ITestOutputHelper testOutputHelper)
-        {
-            var testOutputType = testOutputHelper.GetType();
-            var testMember = testOutputType.GetField("test", BindingFlags.Instance | BindingFlags.NonPublic);
+    private static FieldInfo GetTestMethod(this ITestOutputHelper testOutputHelper)
+    {
+        var testOutputType = testOutputHelper.GetType();
+        var testMember = testOutputType.GetField("test", BindingFlags.Instance | BindingFlags.NonPublic);
 
-            if (testMember == null)
-                throw new InvalidOperationException($"Unable to find 'test' field on {testOutputType.FullName}");
+        if (testMember == null)
+            throw new InvalidOperationException($"Unable to find 'test' field on {testOutputType.FullName}");
 
-            return testMember;
-        }
+        return testMember;
     }
 }

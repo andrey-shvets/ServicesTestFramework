@@ -1,9 +1,8 @@
 ﻿using ServicesTestFramework.ExampleApi.Services.Interfaces;
 
-namespace ServicesTestFramework.ExampleApi.Services
+namespace ServicesTestFramework.ExampleApi.Services;
+
+public class MultipleImplementationsExtraService : IMultipleImplementationsService
 {
-    public class MultipleImplementationsExtraService : IMultipleImplementationsService
-    {
-        public string GetServiceName() => "MultipleImplementationsExtraService";
-    }
+    public string GetServiceName() => "MultipleImplementationsExtraService";
 }

@@ -1,7 +1,6 @@
-﻿namespace ServicesTestFramework.ExampleApi.Services.Interfaces
+﻿namespace ServicesTestFramework.ExampleApi.Services.Interfaces;
+
+public interface ITestSingletonService
 {
-    public interface ITestSingletonService
-    {
-        string GetServiceName();
-    }
+    string GetServiceName();
 }
