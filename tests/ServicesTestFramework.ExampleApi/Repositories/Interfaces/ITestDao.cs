@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
-using ServicesTestFramework.ExampleApi.Repositories.Entities;
+﻿using ServicesTestFramework.ExampleApi.Repositories.Entities;
 
 namespace ServicesTestFramework.ExampleApi.Repositories.Interfaces;
 

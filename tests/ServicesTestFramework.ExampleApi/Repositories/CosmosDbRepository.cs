@@ -1,5 +1,4 @@
-﻿using System.Threading.Tasks;
-using Ardalis.Specification.EntityFrameworkCore;
+﻿using Ardalis.Specification.EntityFrameworkCore;
 
 namespace ServicesTestFramework.ExampleApi.Repositories;
 

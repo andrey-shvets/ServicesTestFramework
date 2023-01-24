@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
-using FluentAssertions;
+﻿using FluentAssertions;
 using ServicesTestFramework.DatabaseContainers.Tests.Controllers;
 using ServicesTestFramework.DatabaseContainers.Tests.Fixtures;
 using ServicesTestFramework.ExampleApi;

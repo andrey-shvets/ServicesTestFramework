@@ -1,7 +1,6 @@
-﻿using System.Linq;
-using Microsoft.IdentityModel.Tokens;
+﻿using Microsoft.IdentityModel.Tokens;
 
-namespace ServicesTestFramework.WebAppTools.Authentication.Options;
+namespace ServicesTestFramework.WebAppTools.Authentication;
 
 internal static class TestJwtTokenOptions
 {

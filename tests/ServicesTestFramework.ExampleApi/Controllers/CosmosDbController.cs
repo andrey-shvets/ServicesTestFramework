@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using Ardalis.Specification;
+﻿using Ardalis.Specification;
 using Microsoft.AspNetCore.Mvc;
 using ServicesTestFramework.ExampleApi.Repositories.Entities;
 

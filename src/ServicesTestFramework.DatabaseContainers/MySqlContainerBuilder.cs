@@ -91,7 +91,7 @@ public class MySqlContainerBuilder
         if (ContainerConfiguration is null)
             throw new ArgumentException("Can not start container. Database configuration is not set.");
 
-        var mountSourceFolder = MountSourceFolderName ?? DatabaseContainerPool.RandomMountSourceFolder();
+        var mountSourceFolder = MountSourceFolderName ?? RandomMountSourceFolder();
         var containerName = ContainerName ?? mountSourceFolder;
 
         PrepareMountSourceFolder(mountSourceFolder, SnapshotPath);
@@ -118,5 +118,11 @@ public class MySqlContainerBuilder
         var extractPath = Path.Combine(AppContext.BaseDirectory, mountSourceFolder);
 
         Archiver.Unzip(snapshotPath, extractPath);
+    }
+
+    public static string RandomMountSourceFolder(string prefix = "mysqlDb")
+    {
+        var token = Path.GetRandomFileName().Replace(".", string.Empty);
+        return $"{prefix}_{token}";
     }
 }

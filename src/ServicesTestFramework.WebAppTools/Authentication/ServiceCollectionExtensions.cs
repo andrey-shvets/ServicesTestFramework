@@ -4,10 +4,9 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
-using ServicesTestFramework.WebAppTools.Authentication.Options;
 using ServicesTestFramework.WebAppTools.Extensions;
 
-namespace ServicesTestFramework.WebAppTools.Authentication.Extensions;
+namespace ServicesTestFramework.WebAppTools.Authentication;
 
 public static class ServiceCollectionExtensions
 {

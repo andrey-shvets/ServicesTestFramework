@@ -8,7 +8,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using ServicesTestFramework.WebAppTools.Authentication;
-using ServicesTestFramework.WebAppTools.Authentication.Extensions;
 using Xunit.Abstractions;
 
 namespace ServicesTestFramework.WebAppTools.Extensions;
@@ -22,19 +21,14 @@ public class WebApplicationBuilder<TEntryPoint> where TEntryPoint : class
 
     private InMemoryDatabaseRoot InMemoryDatabaseRootObject { get; set; }
 
-    public WebApplicationBuilder()
-    {
-        Factory = new WebApplicationFactory<TEntryPoint>();
-    }
+    public WebApplicationBuilder() => Factory = new WebApplicationFactory<TEntryPoint>();
 
-    private WebApplicationBuilder(WebApplicationFactory<TEntryPoint> factory)
-    {
-        Factory = factory;
-    }
+    private WebApplicationBuilder(WebApplicationFactory<TEntryPoint> factory) => Factory = factory;
 
     /// <summary>
     /// Removes all services in <see cref="IServiceCollection"/> with the same service type
     /// as <typeparamref name="TService"/> and replaces them with <paramref name="implementationInstance"/>.
+    /// <para>If specified services not found in <see cref="IServiceCollection"/>, exception thrown.</para>
     /// </summary>
     public WebApplicationBuilder<TEntryPoint> Swap<TService>(TService implementationInstance)
         where TService : class
@@ -47,6 +41,7 @@ public class WebApplicationBuilder<TEntryPoint> where TEntryPoint : class
     /// <summary>
     /// Removes all services in <see cref="IServiceCollection"/> with the same service type
     /// as <typeparamref name="TService"/> and replaces them with <typeparamref name="TImplementation"/>.
+    /// <para>If specified services not found in <see cref="IServiceCollection"/>, exception thrown.</para>
     /// </summary>
     public WebApplicationBuilder<TEntryPoint> Swap<TService, TImplementation>()
         where TService : class
@@ -60,6 +55,7 @@ public class WebApplicationBuilder<TEntryPoint> where TEntryPoint : class
     /// <summary>
     /// Removes all services in <see cref="IServiceCollection"/> with the same service type
     /// as <typeparamref name="TService"/> and replaces them with <paramref name="implementationFactory"/>.
+    /// <para>If specified services not found in <see cref="IServiceCollection"/>, exception thrown.</para>
     /// </summary>
     public WebApplicationBuilder<TEntryPoint> Swap<TService>(Func<IServiceProvider, TService> implementationFactory)
         where TService : class
@@ -162,11 +158,9 @@ public class WebApplicationBuilder<TEntryPoint> where TEntryPoint : class
     /// </summary>
     /// <param name="outputHelper">The <see cref="ITestOutputHelper"/> to use.</param>
     /// <param name="logLevel">The minimum <see cref="LogLevel"/> to be logged.</param>
-    public WebApplicationBuilder<TEntryPoint> AddXUnitLogger(ITestOutputHelper outputHelper, LogLevel logLevel = LogLevel.Debug)
-    {
-        return ConfigureLogging(logBuilder => logBuilder.AddXUnit(outputHelper,
+    public WebApplicationBuilder<TEntryPoint> AddXUnitLogger(ITestOutputHelper outputHelper, LogLevel logLevel = LogLevel.Debug) =>
+        ConfigureLogging(logBuilder => logBuilder.AddXUnit(outputHelper,
             options => options.Filter = (_, level) => level >= logLevel));
-    }
 
     public WebApplicationBuilder<TEntryPoint> ConfigureLogging(Action<ILoggingBuilder> loggingConfiguration)
     {
@@ -181,9 +175,8 @@ public class WebApplicationBuilder<TEntryPoint> where TEntryPoint : class
     /// <summary>
     /// Build WebApplicationFactory with provided configurations.
     /// </summary>
-    public WebApplicationFactory<TEntryPoint> Build()
-    {
-        return Factory.WithWebHostBuilder(builder =>
+    public WebApplicationFactory<TEntryPoint> Build() =>
+        Factory.WithWebHostBuilder(builder =>
         {
             builder.UseContentRoot(AppContext.BaseDirectory);
 
@@ -202,7 +195,6 @@ public class WebApplicationBuilder<TEntryPoint> where TEntryPoint : class
                 configBuilder.AddInMemoryCollection(InMemoryCollectionConfig);
             });
         });
-    }
 
     /// <summary>
     /// Build WebApplicationFactory with provided configurations and create client.

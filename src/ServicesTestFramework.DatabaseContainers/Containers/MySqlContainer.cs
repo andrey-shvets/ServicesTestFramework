@@ -47,8 +47,6 @@ public class MySqlContainer
         await Container.StartAsync().ConfigureAwait(false);
         Connection = new MySqlConnection($"{Container.ConnectionString}allowUserVariables=true;");
         HostPort = Container.Port;
-
-        DatabaseContainerPool.Containers.Add(this);
     }
 
     public async Task StopContainer(bool withCleanUp = true)
@@ -58,8 +56,6 @@ public class MySqlContainer
 
         Connection.Dispose();
         await Container.DisposeAsync().ConfigureAwait(false);
-
-        DatabaseContainerPool.Containers.Remove(this);
 
         if (withCleanUp)
             CleanupFolder(MountSourceFolder);

@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace ServicesTestFramework.ExampleApi.Repositories.Entities;
+﻿namespace ServicesTestFramework.ExampleApi.Repositories.Entities;
 
 public class TestDatabaseEntity
 {

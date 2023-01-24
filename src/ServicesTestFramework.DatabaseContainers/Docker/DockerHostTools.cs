@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using System.Text.RegularExpressions;
+﻿using System.Text.RegularExpressions;
 using Ductus.FluentDocker.Commands;
 using Ductus.FluentDocker.Model.Containers;
 using Ductus.FluentDocker.Services;

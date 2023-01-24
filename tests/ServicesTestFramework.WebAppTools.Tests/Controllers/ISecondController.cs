@@ -1,6 +1,4 @@
-﻿using System.Net.Http;
-using System.Threading.Tasks;
-using RestEase;
+﻿using RestEase;
 
 namespace ServicesTestFramework.WebAppTools.Tests.Controllers;
 

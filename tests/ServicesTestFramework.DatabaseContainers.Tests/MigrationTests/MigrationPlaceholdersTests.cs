@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Threading.Tasks;
-using FluentAssertions;
+﻿using FluentAssertions;
 using ServicesTestFramework.DatabaseContainers.Containers;
 using Xunit;
 using static ServicesTestFramework.DatabaseContainers.Tests.Helpers.TestContainerHelpers;

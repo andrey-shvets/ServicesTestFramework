@@ -1,7 +1,4 @@
-﻿using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Hosting;
-
-namespace ServicesTestFramework.ExampleApi;
+﻿namespace ServicesTestFramework.ExampleApi;
 
 public class Program
 {

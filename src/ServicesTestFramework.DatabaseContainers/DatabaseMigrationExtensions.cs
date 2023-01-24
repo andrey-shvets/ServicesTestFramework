@@ -1,7 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data.Common;
+﻿using System.Data.Common;
 using System.Text.RegularExpressions;
+using EvolveDb;
 using MySqlConnector;
 
 namespace ServicesTestFramework.DatabaseContainers;
@@ -19,7 +18,7 @@ public static class DatabaseMigrationExtensions
         using var createDatabase = new MySqlCommand($"CREATE DATABASE IF NOT EXISTS {databaseName}", connection);
         createDatabase.ExecuteNonQuery();
 
-        var evolve = new Evolve.Evolve(connection) { MetadataTableName = "__changelog", Locations = migrationLocations, IsEraseDisabled = true, Placeholders = placeholders };
+        var evolve = new Evolve(connection) { MetadataTableName = "__changelog", Locations = migrationLocations, IsEraseDisabled = true, Placeholders = placeholders };
 
         evolve.Migrate();
 

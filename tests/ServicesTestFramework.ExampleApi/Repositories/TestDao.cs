@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
-using Dapper;
+﻿using Dapper;
 using Microsoft.Extensions.Options;
 using MySql.Data.MySqlClient;
 using ServicesTestFramework.ExampleApi.Configuration.Options;

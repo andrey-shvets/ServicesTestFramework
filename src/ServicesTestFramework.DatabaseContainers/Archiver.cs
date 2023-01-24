@@ -1,5 +1,4 @@
-﻿using System.IO;
-using Ionic.Zip;
+﻿using Ionic.Zip;
 
 namespace ServicesTestFramework.DatabaseContainers;
 
