@@ -11,7 +11,8 @@ public class MySqlContainerBuilder
     private string SnapshotPath { get; set; }
     private string ContainerName { get; set; }
     private string MySqlImageTagName { get; set; }
-    private Dictionary<string, string> MysqlEntryPointParams { get; set; } = new Dictionary<string, string>();
+    private Dictionary<string, string> MysqlEntryPointParams { get; } = new Dictionary<string, string>();
+    private Dictionary<string, string> MysqlEnvironmentVariables { get; } = new Dictionary<string, string>();
     private bool CleanupEnabled { get; set; } = true;
 
     public MySqlContainerBuilder SetDatabaseConfiguration(string databaseName, string username, string password)
@@ -79,6 +80,16 @@ public class MySqlContainerBuilder
 
     public MySqlContainerBuilder WithMySqlParam(string key) => WithMySqlParam(key, null);
 
+    public MySqlContainerBuilder WithEnvironment(string key, string value)
+    {
+        if (string.IsNullOrWhiteSpace(key))
+            throw new ArgumentException($"{nameof(key)} can not be null or empty.", nameof(key));
+
+        MysqlEnvironmentVariables.Add(key, value);
+
+        return this;
+    }
+
     public MySqlContainerBuilder WithCleanup(bool enabled)
     {
         CleanupEnabled = enabled;
@@ -96,7 +107,9 @@ public class MySqlContainerBuilder
 
         PrepareMountSourceFolder(mountSourceFolder, SnapshotPath);
 
-        var mySqlContainer = MySqlContainer.InitializeContainer(ContainerConfiguration, mountSourceFolder, containerName, CleanupEnabled, MySqlImageTagName, MysqlEntryPointParams);
+        var mySqlContainer = MySqlContainer.InitializeContainer(ContainerConfiguration, mountSourceFolder, containerName,
+            CleanupEnabled, MySqlImageTagName, MysqlEntryPointParams, MysqlEnvironmentVariables);
+
         await mySqlContainer.StartContainer();
 
         return mySqlContainer;

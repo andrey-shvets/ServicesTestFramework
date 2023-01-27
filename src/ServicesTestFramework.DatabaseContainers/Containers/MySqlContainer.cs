@@ -19,7 +19,13 @@ public class MySqlContainer
     {
     }
 
-    public static MySqlContainer InitializeContainer(TestcontainerDatabaseConfiguration containerConfiguration, string mountSourceFolder, string containerName, bool cleanupEnabled = true, string imageTagName = null, IDictionary<string, string> additionalEntryPointParams = null)
+    public static MySqlContainer InitializeContainer(
+        TestcontainerDatabaseConfiguration containerConfiguration,
+        string mountSourceFolder, string containerName,
+        bool cleanupEnabled = true,
+        string imageTagName = null,
+        IDictionary<string, string> additionalEntryPointParams = null,
+        IReadOnlyDictionary<string, string> environmentParams = null)
     {
         var entryPointParams = CombineEntryPointParams(additionalEntryPointParams);
         var mountSourcePath = Path.GetFullPath(mountSourceFolder);
@@ -33,6 +39,9 @@ public class MySqlContainer
 
         if (imageTagName is not null)
             containerBuild = containerBuild.WithImage(imageTagName);
+
+        if (environmentParams is not null)
+            containerBuild = containerBuild.WithEnvironment(environmentParams);
 
         var container = containerBuild.Build();
 

@@ -50,6 +50,9 @@ public class MySqlDatabaseFixture : IAsyncLifetime
             .SetContainerName(environment.TestContainerName)
             .SetMountSourceFolder(environment.TestContainerName)
             .SetDatabaseConfiguration(DatabaseName, Username, DatabasePassword)
+            .WithMySqlParam("character-set-server", "utf8")
+            .WithMySqlParam("collation-server", "utf8_unicode_ci")
+            .WithEnvironment("MYSQL_ROOT_PASSWORD", "123456789")
             .WithCleanup(enabled: environment.RestartDatabaseContainer);
 
         if (!string.IsNullOrEmpty(environment.MysqlImageTagName))
