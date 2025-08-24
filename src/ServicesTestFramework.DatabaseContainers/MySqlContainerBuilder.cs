@@ -1,12 +1,12 @@
-﻿using DotNet.Testcontainers.Configurations;
-using ServicesTestFramework.DatabaseContainers.Containers;
+﻿using ServicesTestFramework.DatabaseContainers.Containers;
+using Testcontainers.MySql;
 using static ServicesTestFramework.DatabaseContainers.Helpers.FileSystemHelper;
 
 namespace ServicesTestFramework.DatabaseContainers;
 
 public class MySqlContainerBuilder
 {
-    private MySqlTestcontainerConfiguration ContainerConfiguration { get; set; }
+    private MySqlConfiguration ContainerConfiguration { get; set; }
     private string MountSourceFolderName { get; set; }
     private string SnapshotPath { get; set; }
     private string ContainerName { get; set; }
@@ -20,7 +20,7 @@ public class MySqlContainerBuilder
         if (string.IsNullOrEmpty(databaseName))
             throw new ArgumentException("Database name can not be null or empty.", nameof(databaseName));
 
-        ContainerConfiguration = new MySqlTestcontainerConfiguration { Database = databaseName, Username = username, Password = password };
+        ContainerConfiguration = new MySqlConfiguration(databaseName, username, password);
 
         return this;
     }
@@ -90,14 +90,14 @@ public class MySqlContainerBuilder
         return this;
     }
 
-    public MySqlContainerBuilder WithCleanup(bool enabled)
+    public MySqlContainerBuilder WithCleanup(bool enabled = true)
     {
         CleanupEnabled = enabled;
 
         return this;
     }
 
-    public async Task<MySqlContainer> StartContainer()
+    public async Task<MySqlTestContainer> StartContainer()
     {
         if (ContainerConfiguration is null)
             throw new ArgumentException("Can not start container. Database configuration is not set.");
@@ -107,7 +107,7 @@ public class MySqlContainerBuilder
 
         PrepareMountSourceFolder(mountSourceFolder, SnapshotPath);
 
-        var mySqlContainer = MySqlContainer.InitializeContainer(ContainerConfiguration, mountSourceFolder, containerName,
+        var mySqlContainer = MySqlTestContainer.InitializeContainer(ContainerConfiguration, mountSourceFolder, containerName,
             CleanupEnabled, MySqlImageTagName, MysqlEntryPointParams, MysqlEnvironmentVariables);
 
         await mySqlContainer.StartContainer();

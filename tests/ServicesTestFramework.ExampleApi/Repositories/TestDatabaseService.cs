@@ -5,25 +5,25 @@ namespace ServicesTestFramework.ExampleApi.Repositories;
 
 public class TestDatabaseService : ITestDatabaseService
 {
-    private readonly IRepositoryBase<TestDatabaseEntity> _testDatabaseEntityRepository;
+    private IRepositoryBase<TestDatabaseEntity> TestDatabaseEntityRepository { get; set; }
 
     public TestDatabaseService(
         IRepositoryBase<TestDatabaseEntity> testDatabaseEntityRepository)
     {
-        this._testDatabaseEntityRepository = testDatabaseEntityRepository;
+        TestDatabaseEntityRepository = testDatabaseEntityRepository;
     }
 
     public async Task<TestDatabaseEntity> Add(string name, int intData)
     {
         var data = new TestDatabaseEntity(Guid.NewGuid(), name, intData);
-        var newThing = await _testDatabaseEntityRepository.AddAsync(data);
+        var newThing = await TestDatabaseEntityRepository.AddAsync(data);
 
         return newThing;
     }
 
     public async Task<TestDatabaseEntity> Get(Guid id)
     {
-        var data = await _testDatabaseEntityRepository.GetByIdAsync(id);
+        var data = await TestDatabaseEntityRepository.GetByIdAsync(id);
 
         return data;
     }

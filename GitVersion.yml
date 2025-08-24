@@ -1,6 +1,5 @@
-mode: Mainline
-branches: {}
+workflow: TrunkBased/preview1
+merge-message-formats: {}
 ignore:
   sha: []
-merge-message-formats: {}
 update-build-number: true

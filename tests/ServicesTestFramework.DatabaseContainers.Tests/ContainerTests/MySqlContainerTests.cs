@@ -1,4 +1,5 @@
-﻿using Docker.DotNet;
+﻿using System.Net;
+using Docker.DotNet;
 using FluentAssertions;
 using MySqlConnector;
 using ServicesTestFramework.DatabaseContainers.Containers;
@@ -11,7 +12,7 @@ public class MySqlContainerTests : IAsyncLifetime
     private const string DatabaseName = "testdb";
     private const string UserName = "testUser";
     private const string Password = "123456789";
-    private MySqlContainer TestContainer { get; set; }
+    private MySqlTestContainer TestContainer { get; set; }
 
     public Task InitializeAsync() => Task.CompletedTask;
 
@@ -76,11 +77,11 @@ public class MySqlContainerTests : IAsyncLifetime
     [InlineData("mysql:999.42.24")]
     public async Task SetImageTagName_ThrowsDockerImageNotFoundException_ForNonExistentImage(string image)
     {
-        var ex = await Assert.ThrowsAsync<DockerImageNotFoundException>(async () => await new MySqlContainerBuilder()
+        var ex = await Assert.ThrowsAsync<DockerApiException>(async () => await new MySqlContainerBuilder()
                                                                                         .SetDatabaseConfiguration(DatabaseName, UserName, Password)
                                                                                         .SetImageTagName(image)
                                                                                         .StartContainer());
 
-        ex.Message.Should().Contain("No such image");
+        ex.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
 }

@@ -28,7 +28,7 @@ public static class DatabaseMigrationExtensions
     private static string GetConnectionString(DbConnection dbConnection)
     {
         if (dbConnection is null)
-            throw new ArgumentNullException(nameof(dbConnection), "MySql connection can not be null.");
+            throw new ArgumentNullException(nameof(dbConnection), "Database connection can not be null.");
 
         var connectionString = dbConnection.ConnectionString;
 

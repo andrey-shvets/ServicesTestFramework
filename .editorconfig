@@ -450,7 +450,7 @@ dotnet_diagnostic.SA1407.severity = silent
 # SA1408: Conditional expressions should declare precedence
 dotnet_diagnostic.SA1408.severity = silent
 # SA0001: All diagnostics of XML documentation comments has been disabled due to the current project configuration.
-dotnet_diagnostic.SA0001.severity = silent
+dotnet_diagnostic.SA0001.severity = none
 # SA1117: Parameters should be on same line or separate lines
 dotnet_diagnostic.SA1117.severity = none
 # The name of a parameter in C# does not begin with a lower-case letter.

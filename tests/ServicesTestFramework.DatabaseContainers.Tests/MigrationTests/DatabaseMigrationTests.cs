@@ -12,7 +12,7 @@ public class DatabaseMigrationTests : IAsyncLifetime
     private const string DefaultScenarioPlaceholder = "First";
     private const string SqlScriptsLocation = "Database";
 
-    private MySqlContainer TestContainer { get; set; }
+    private MySqlTestContainer TestContainer { get; set; }
 
     public Task InitializeAsync() => Task.CompletedTask;
 
@@ -23,7 +23,7 @@ public class DatabaseMigrationTests : IAsyncLifetime
     {
         var containerBuilder = new MySqlContainerBuilder()
             .SetDatabaseConfiguration(DatabaseName, UserName, Password)
-            .WithCleanup(enabled: true);
+            .WithCleanup();
 
         TestContainer = await containerBuilder.StartContainer();
 
@@ -43,7 +43,8 @@ public class DatabaseMigrationTests : IAsyncLifetime
     public async Task ApplyMigrations_UsingSnapshotWithAllMigrations_DoesNotApplyAnyAdditionalMigrations()
     {
         var containerBuilder = new MySqlContainerBuilder()
-            .SetDatabaseConfiguration(DatabaseName, UserName, Password);
+            .SetDatabaseConfiguration(DatabaseName, UserName, Password)
+            .WithCleanup();
 
         var snapshotPath = Path.Combine(AppContext.BaseDirectory, SqlScriptsLocation, "data-snapshot-all.zip");
         containerBuilder.SetDatabaseSnapshot(snapshotPath);
@@ -62,7 +63,8 @@ public class DatabaseMigrationTests : IAsyncLifetime
     public async Task ApplyMigrations_UsingSnapshot_ApplesOnlyNewMigrations()
     {
         var containerBuilder = new MySqlContainerBuilder()
-            .SetDatabaseConfiguration(DatabaseName, UserName, Password);
+            .SetDatabaseConfiguration(DatabaseName, UserName, Password)
+            .WithCleanup();
 
         var snapshotPath = Path.Combine(AppContext.BaseDirectory, SqlScriptsLocation, "data-snapshot.zip");
         containerBuilder.SetDatabaseSnapshot(snapshotPath);

@@ -1,26 +1,25 @@
-﻿using System.Data.Common;
-using DotNet.Testcontainers.Builders;
-using DotNet.Testcontainers.Configurations;
-using DotNet.Testcontainers.Containers;
+﻿using System.Collections.Concurrent;
+using System.Data.Common;
 using MySqlConnector;
+using Testcontainers.MySql;
 using static ServicesTestFramework.DatabaseContainers.Helpers.FileSystemHelper;
 
 namespace ServicesTestFramework.DatabaseContainers.Containers;
 
-public class MySqlContainer
+public class MySqlTestContainer
 {
-    public TestcontainerDatabase Container { get; init; }
+    public MySqlContainer Container { get; init; }
     public DbConnection Connection { get; private set; }
 
     public string MountSourceFolder { get; init; }
     public int HostPort { get; private set; }
 
-    private MySqlContainer()
+    private MySqlTestContainer()
     {
     }
 
-    public static MySqlContainer InitializeContainer(
-        TestcontainerDatabaseConfiguration containerConfiguration,
+    public static MySqlTestContainer InitializeContainer(
+        MySqlConfiguration configuration,
         string mountSourceFolder, string containerName,
         bool cleanupEnabled = true,
         string imageTagName = null,
@@ -29,9 +28,10 @@ public class MySqlContainer
     {
         var entryPointParams = CombineEntryPointParams(additionalEntryPointParams);
         var mountSourcePath = Path.GetFullPath(mountSourceFolder);
-
-        var containerBuild = new TestcontainersBuilder<MySqlTestcontainer>()
-            .WithDatabase(containerConfiguration)
+        var containerBuild = new MySqlBuilder()
+            .WithDatabase(configuration.Database)
+            .WithUsername(configuration.Username)
+            .WithPassword(configuration.Password)
             .WithName(containerName)
             .WithBindMount(mountSourcePath, "/var/lib/mysql")
             .WithEntrypoint(entryPointParams)
@@ -45,8 +45,10 @@ public class MySqlContainer
 
         var container = containerBuild.Build();
 
-        return new MySqlContainer { Container = container, MountSourceFolder = mountSourceFolder };
+        return new MySqlTestContainer { Container = container, MountSourceFolder = mountSourceFolder };
     }
+
+    public static ConcurrentDictionary<int, int> Steve = new ConcurrentDictionary<int, int>();
 
     public async Task StartContainer()
     {
@@ -54,8 +56,8 @@ public class MySqlContainer
             throw new InvalidOperationException("Container already running");
 
         await Container.StartAsync().ConfigureAwait(false);
-        Connection = new MySqlConnection($"{Container.ConnectionString}allowUserVariables=true;");
-        HostPort = Container.Port;
+        Connection = new MySqlConnection($"{Container.GetConnectionString()};allowUserVariables=true;");
+        HostPort = Container.GetMappedPublicPort(3306);
     }
 
     public async Task StopContainer(bool withCleanUp = true)

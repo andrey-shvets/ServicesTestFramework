@@ -19,7 +19,7 @@ pool:
   vmImage: 'ubuntu-latest'
 
 variables:
-  gitversionVerisonSpec: "5.10.1"
+  gitversionVerisonSpec: "6.4.0"
   ${{ if eq( variables['Build.SourceBranchName'], 'main' ) }}:
     packageVersionNumber: '$(MajorMinorPatch)'
     isMainBranch: true

@@ -1,5 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace ServicesTestFramework.WebAppTools.Extensions;
 
@@ -12,8 +14,9 @@ public static class ConfigureDbContextExtensions
     public static void SwapDbContext<TContext>(this IServiceCollection services, Action<DbContextOptionsBuilder> dbContextConfiguration)
         where TContext : DbContext
     {
-        var descriptor = services.FindServiceDescriptor<DbContextOptions<TContext>>();
-        services.Remove(descriptor);
+        services.RemoveAll<IDbContextOptionsConfiguration<TContext>>();
+        services.RemoveAll<TContext>();
+        services.RemoveAll<DbContextOptions<TContext>>();
 
         services.AddDbContext<TContext>(dbContextConfiguration);
     }

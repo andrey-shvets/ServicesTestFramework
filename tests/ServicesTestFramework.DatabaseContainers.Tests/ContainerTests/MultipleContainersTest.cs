@@ -10,8 +10,8 @@ public class MultipleContainersTest : IAsyncLifetime
     private const string UserName = "testUser";
     private const string Password = "123456789";
 
-    private MySqlContainer TestContainer { get; set; }
-    private MySqlContainer AdditionalTestContainer { get; set; }
+    private MySqlTestContainer TestContainer { get; set; }
+    private MySqlTestContainer AdditionalTestContainer { get; set; }
 
     public Task InitializeAsync() => Task.CompletedTask;
 

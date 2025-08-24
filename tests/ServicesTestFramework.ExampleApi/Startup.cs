@@ -57,6 +57,8 @@ public class Startup
         services.AddScoped<IMultipleImplementationsService, MultipleImplementationsService>();
         services.AddScoped<IMultipleImplementationsService, MultipleImplementationsExtraService>();
 
+        services.AddScoped(typeof(IRepositoryBase<>), typeof(CosmosDbRepository<>));
+
         services.AddDbContext<TestDatabaseContext>(
             (provider, options) =>
             {
@@ -70,20 +72,20 @@ public class Startup
                     cosmosOptionsAction: null);
             });
 
-        services.AddScoped(typeof(IRepositoryBase<>), typeof(CosmosDbRepository<>));
+        services.Configure<CosmosDbOptions>(Configuration.GetSection("CosmosDb"));
     }
 
-    public void Configure(IApplicationBuilder app)
+    public void Configure(IApplicationBuilder builder)
     {
-        app.UseDeveloperExceptionPage();
-        app.UseSwagger();
-        app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "ExampleService v1"));
+        builder.UseDeveloperExceptionPage();
+        builder.UseSwagger();
+        builder.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "ExampleService v1"));
 
-        app.UseRouting();
+        builder.UseRouting();
 
-        app.UseAuthorization();
-        app.UseAuthentication();
+        builder.UseAuthorization();
+        builder.UseAuthentication();
 
-        app.UseEndpoints(endpoints => endpoints.MapControllers());
+        builder.UseEndpoints(endpoints => endpoints.MapControllers());
     }
 }

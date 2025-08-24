@@ -7,7 +7,7 @@ namespace ServicesTestFramework.DatabaseContainers.Tests.MigrationTests;
 
 public class MigrationPlaceholdersTests : IAsyncLifetime
 {
-    private MySqlContainer TestContainer { get; set; }
+    private MySqlTestContainer TestContainer { get; set; }
 
     public Task InitializeAsync() => Task.CompletedTask;
 
@@ -48,7 +48,7 @@ public class MigrationPlaceholdersTests : IAsyncLifetime
         hotfixCount.Should().Be(0);
     }
 
-    private static async Task<MySqlContainer> StartDatabaseInContainer(Dictionary<string, string> placeholders)
+    private static async Task<MySqlTestContainer> StartDatabaseInContainer(Dictionary<string, string> placeholders)
     {
         var databaseName = "testdb";
         var userName = "testUser";

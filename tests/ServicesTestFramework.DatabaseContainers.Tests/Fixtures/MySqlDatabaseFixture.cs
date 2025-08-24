@@ -29,7 +29,7 @@ public class MySqlDatabaseFixture : IAsyncLifetime
         ApplyMigrations(Connection);
     }
 
-    private static DbConnection ConnectToContainer(TestEnvironmentOptions environment)
+    private static MySqlConnection ConnectToContainer(TestEnvironmentOptions environment)
     {
         var isContainerRunning = DockerTools.ContainerExists(environment.TestContainerName);
 
