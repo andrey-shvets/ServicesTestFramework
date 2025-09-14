@@ -1,5 +1,4 @@
-﻿using System.Collections.Concurrent;
-using System.Data.Common;
+﻿using System.Data.Common;
 using MySqlConnector;
 using Testcontainers.MySql;
 using static ServicesTestFramework.DatabaseContainers.Helpers.FileSystemHelper;
@@ -47,8 +46,6 @@ public class MySqlTestContainer
 
         return new MySqlTestContainer { Container = container, MountSourceFolder = mountSourceFolder };
     }
-
-    public static ConcurrentDictionary<int, int> Steve = new ConcurrentDictionary<int, int>();
 
     public async Task StartContainer()
     {

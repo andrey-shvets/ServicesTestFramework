@@ -19,22 +19,19 @@ public static class ServiceCollectionExtensions
     {
         services.Swap<IAuthenticationSchemeProvider, MockAuthenticationSchemeProvider>();
 
-        services
-            .AddAuthentication(options =>
-            {
-                options.SchemeMap.Remove(authScheme);
+        services.AddAuthentication(options =>
+        {
+            options.SchemeMap.Remove(authScheme);
 
-                options.DefaultScheme = authScheme;
-                options.DefaultAuthenticateScheme = authScheme;
-                options.DefaultChallengeScheme = authScheme;
-            })
-            .AddScheme<JwtBearerOptions, JwtBearerHandler>(authScheme, options => options.TokenValidationParameters = new TokenValidationParameters
-            {
-                ValidateAudience = false,
-                ValidateIssuer = false,
-                ValidIssuer = TestJwtTokenOptions.Issuer,
-                IssuerSigningKey = TestJwtTokenOptions.SecurityKey
-            });
+            options.DefaultScheme = authScheme;
+        })
+        .AddScheme<JwtBearerOptions, TestJwtAuthenticationHandler>(authScheme, options => options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateAudience = false,
+            ValidateIssuer = false,
+            ValidIssuer = TestJwtTokenOptions.Issuer,
+            IssuerSigningKey = TestJwtTokenOptions.SecurityKey
+        });
 
         return services;
     }

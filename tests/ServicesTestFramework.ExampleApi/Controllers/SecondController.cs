@@ -29,7 +29,7 @@ public class SecondController : ControllerBase
         TestDao = testDao;
     }
 
-    [HttpGet("getScopedServiceName")]
+    [HttpGet("scopedServiceName")]
     public ActionResult<string> GetScopedServiceName()
     {
         var name = TestScopedServiceInstance.GetServiceName();
@@ -37,7 +37,7 @@ public class SecondController : ControllerBase
         return Ok(name);
     }
 
-    [HttpGet("getSingletonServiceName")]
+    [HttpGet("singletonServiceName")]
     public ActionResult<string> GetSingletonServiceName()
     {
         var name = TestSingletonServiceInstance.GetServiceName();
@@ -45,7 +45,7 @@ public class SecondController : ControllerBase
         return Ok(name);
     }
 
-    [HttpGet("getTransientServiceName")]
+    [HttpGet("transientServiceName")]
     public ActionResult<string> GetTransientServiceName()
     {
         var name = TestTransientServiceInstance.GetServiceName();

@@ -29,7 +29,7 @@ public class FirstController : ControllerBase
         MultipleImplementationsServiceInstance = multipleImplementationsService;
     }
 
-    [HttpGet("getUserId")]
+    [HttpGet("userId")]
     [Authorize]
     public ActionResult<string> GetUserId()
     {
@@ -38,7 +38,7 @@ public class FirstController : ControllerBase
         return Ok(userId);
     }
 
-    [HttpGet("getUserIdWithPolicy")]
+    [HttpGet("userIdWithPolicy")]
     [Authorize(Policy = "TestPolicy")]
     public ActionResult<string> GetUserIdWithPolicy()
     {
@@ -47,7 +47,7 @@ public class FirstController : ControllerBase
         return Ok(userId);
     }
 
-    [HttpGet("getClaimByType")]
+    [HttpGet("claimByType")]
     public ActionResult<string> GetClaimByType([FromQuery] string claimType)
     {
         var claims = User.FindAll(claimType).ToList();
@@ -63,7 +63,7 @@ public class FirstController : ControllerBase
         return Ok(claimValue);
     }
 
-    [HttpGet("getClaimsByType")]
+    [HttpGet("claimsByType")]
     public ActionResult<IEnumerable<string>> GetClaimsByType([FromQuery] string claimType)
     {
         var claims = User.FindAll(claimType).ToList();
@@ -76,7 +76,7 @@ public class FirstController : ControllerBase
         return Ok(claimValues);
     }
 
-    [HttpGet("getScopedServiceName")]
+    [HttpGet("scopedServiceName")]
     public ActionResult<string> GetScopedServiceName()
     {
         var name = TestScopedServiceInstance.GetServiceName();
@@ -84,7 +84,7 @@ public class FirstController : ControllerBase
         return Ok(name);
     }
 
-    [HttpGet("getSingletonServiceName")]
+    [HttpGet("singletonServiceName")]
     public ActionResult<string> GetSingletonServiceName()
     {
         var name = TestSingletonServiceInstance.GetServiceName();
@@ -92,7 +92,7 @@ public class FirstController : ControllerBase
         return Ok(name);
     }
 
-    [HttpGet("getTransientServiceName")]
+    [HttpGet("transientServiceName")]
     public ActionResult<string> GetTransientServiceName()
     {
         var name = TestTransientServiceInstance.GetServiceName();
@@ -100,7 +100,7 @@ public class FirstController : ControllerBase
         return Ok(name);
     }
 
-    [HttpGet("getMultipleImplementationsServiceName")]
+    [HttpGet("multipleImplementationsServiceName")]
     public ActionResult<string> GetMultipleImplementationsServiceName()
     {
         var name = MultipleImplementationsServiceInstance.GetServiceName();

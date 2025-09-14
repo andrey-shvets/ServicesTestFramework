@@ -5,13 +5,13 @@ namespace ServicesTestFramework.WebAppTools.Tests.Controllers;
 [BasePath("second")]
 public interface ISecondController
 {
-    [Get("getScopedServiceName")]
+    [Get("scopedServiceName")]
     Task<string> GetScopedServiceName();
 
-    [Get("getSingletonServiceName")]
+    [Get("singletonServiceName")]
     Task<string> GetSingletonServiceName();
 
-    [Get("getTransientServiceName")]
+    [Get("transientServiceName")]
     Task<string> GetTransientServiceName();
 
     [Get("getConfigValue")]

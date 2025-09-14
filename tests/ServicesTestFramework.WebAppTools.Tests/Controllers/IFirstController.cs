@@ -6,29 +6,29 @@ namespace ServicesTestFramework.WebAppTools.Tests.Controllers;
 [BasePath("first")]
 public interface IFirstController
 {
-    [Get("getUserId")]
+    [Get("userId")]
     Task<string> GetUserId([Header(nameof(HeaderNames.Authorization))] string authToken);
 
-    [Get("getUserIdWithPolicy")]
+    [Get("userIdWithPolicy")]
     Task<string> GetUserIdWithPolicy([Header(nameof(HeaderNames.Authorization))] string authToken);
 
-    [Get("getClaimByType")]
+    [Get("claimByType")]
     Task<string> GetClaimByType([Query] string claimType, [Header(nameof(HeaderNames.Authorization))] string authToken);
 
-    [Get("getClaimsByType")]
+    [Get("claimsByType")]
     Task<IEnumerable<string>> GetClaimsByType([Query] string claimType, [Header(nameof(HeaderNames.Authorization))] string authToken);
 
-    [Get("getScopedServiceName")]
+    [Get("scopedServiceName")]
     Task<string> GetScopedServiceName();
 
-    [Get("getSingletonServiceName")]
+    [Get("singletonServiceName")]
     Task<string> GetSingletonServiceName();
 
-    [Get("getTransientServiceName")]
+    [Get("transientServiceName")]
     Task<string> GetTransientServiceName();
 
-    [Get("getMultipleImplementationsServiceName")]
-    public Task<string> GetMultipleImplementationsServiceName();
+    [Get("multipleImplementationsServiceName")]
+    Task<string> GetMultipleImplementationsServiceName();
 
     [Get("health")]
     [AllowAnyStatusCode]

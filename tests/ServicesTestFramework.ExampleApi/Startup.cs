@@ -1,4 +1,5 @@
 ﻿using System.Security.Claims;
+using System.Text;
 using Ardalis.Specification;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
@@ -21,22 +22,24 @@ public class Startup
 
     public void ConfigureServices(IServiceCollection services)
     {
-        services.AddMvcCore()
-            .AddApiExplorer();
+        services.Configure<JwtAuthenticationOptions>(Configuration.GetSection(JwtAuthenticationOptions.SectionKey));
 
-        services.AddSwagger();
-
-        services.AddScoped<ITestScopedService, TestScopedService>();
-        services.AddSingleton<ITestSingletonService, TestSingletonService>();
-        services.AddTransient<ITestTransientService, TestTransientService>();
+        var jwtAuthentication = new JwtAuthenticationOptions();
+        Configuration.GetSection(JwtAuthenticationOptions.SectionKey).Bind(jwtAuthentication);
 
         services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-            .AddScheme<JwtBearerOptions, JwtBearerHandler>(JwtBearerDefaults.AuthenticationScheme, options => options.TokenValidationParameters = new TokenValidationParameters
+            .AddJwtBearer(options =>
             {
-                ValidateAudience = false,
-                ValidateIssuer = false,
-                ValidIssuer = "TestIssuer",
-                IssuerSigningKey = new SymmetricSecurityKey(new byte[] { 0, 1, 2, 3 }) { KeyId = "TestKeyId" }
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true,
+                    ValidIssuer = jwtAuthentication.Issuer,
+                    ValidAudience = jwtAuthentication.Audience,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtAuthentication.SecurityKey))
+                };
             });
 
         services.AddAuthorization(options =>
@@ -46,11 +49,16 @@ public class Startup
             options.AddPolicy("OtherPolicy", policy => policy.RequireClaim("OtherPolicy"));
         });
 
-        services.Configure<DatabaseOptions>(Configuration.GetSection(DatabaseOptions.SectionKey));
+        services.AddControllers();
+        services.AddEndpointsApiExplorer();
 
-        services
-            .AddRouting()
-            .AddControllers();
+        services.AddSwagger();
+
+        services.AddScoped<ITestScopedService, TestScopedService>();
+        services.AddSingleton<ITestSingletonService, TestSingletonService>();
+        services.AddTransient<ITestTransientService, TestTransientService>();
+
+        services.Configure<DatabaseOptions>(Configuration.GetSection(DatabaseOptions.SectionKey));
 
         services.AddScoped<ITestDao, TestDao>();
 
@@ -59,32 +67,34 @@ public class Startup
 
         services.AddScoped(typeof(IRepositoryBase<>), typeof(CosmosDbRepository<>));
 
-        services.AddDbContext<TestDatabaseContext>(
-            (provider, options) =>
-            {
-                var optionsService = provider.GetRequiredService<IOptions<CosmosDbOptions>>();
-                var cosmosOptions = optionsService.Value;
+        services.Configure<CosmosDbOptions>(Configuration.GetSection(CosmosDbOptions.SectionKey));
 
-                options.UseCosmos(
-                    cosmosOptions.AccountEndpoint,
-                    cosmosOptions.AccountKey,
-                    "TestDatabase",
-                    cosmosOptionsAction: null);
-            });
+        services.AddDbContext<TestDatabaseContext>((provider, options) =>
+        {
+            var optionsService = provider.GetRequiredService<IOptions<CosmosDbOptions>>();
+            var cosmosOptions = optionsService.Value;
 
-        services.Configure<CosmosDbOptions>(Configuration.GetSection("CosmosDb"));
+            options.UseCosmos(
+                cosmosOptions.AccountEndpoint,
+                cosmosOptions.AccountKey,
+                cosmosOptions.DatabaseName);
+        });
     }
 
     public void Configure(IApplicationBuilder builder)
     {
         builder.UseDeveloperExceptionPage();
         builder.UseSwagger();
-        builder.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "ExampleService v1"));
+        builder.UseSwaggerUI(c =>
+        {
+            c.SwaggerEndpoint("/swagger/v1/swagger.json", "ExampleService API v1");
+            c.RoutePrefix = string.Empty;
+        });
 
         builder.UseRouting();
 
-        builder.UseAuthorization();
         builder.UseAuthentication();
+        builder.UseAuthorization();
 
         builder.UseEndpoints(endpoints => endpoints.MapControllers());
     }
