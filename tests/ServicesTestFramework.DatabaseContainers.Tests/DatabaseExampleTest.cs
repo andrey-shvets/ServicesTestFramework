@@ -2,35 +2,29 @@
 using ServicesTestFramework.DatabaseContainers.Tests.Fixtures;
 using ServicesTestFramework.ExampleApi;
 using ServicesTestFramework.WebAppTools.Extensions;
-using Xunit;
-using Xunit.Abstractions;
 
 namespace ServicesTestFramework.DatabaseContainers.Tests;
 
-[Collection(MySqlDatabaseCollectionFixture.CollectionName)]
-public class DatabaseExampleTest : IClassFixture<WebApplicationBuilder<Startup>>
+public class DatabaseExampleTest
 {
-    private IDatabaseController DatabaseClient { get; }
+    private static IDatabaseController DatabaseClient { get; set; }
 
-    public DatabaseExampleTest(
-        MySqlDatabaseFixture mySqlDatabaseFixture,
-        WebApplicationBuilder<Startup> builder,
-        ITestOutputHelper testOutputHelper)
+    [Before(Class)]
+    public static void Setup()
     {
         var imMemoryConfig = new Dictionary<string, string>
         {
-            { "Database:ConnectionString", mySqlDatabaseFixture.Connection.ConnectionString }
+            { "Database:ConnectionString", MySqlDatabaseFixture.Connection.ConnectionString }
         };
 
-        var client = builder
+        var client = new WebApplicationBuilder<Startup>()
             .AddConfiguration(imMemoryConfig)
-            .AddXUnitLogger(testOutputHelper)
             .CreateClient();
 
         DatabaseClient = client.ClientFor<IDatabaseController>();
     }
 
-    [Fact]
+    [Test]
     public async Task MySqlDatabaseFixture_StartsDatabaseInContainer_WhichCanBeUsedAsSourceDatabaseForWebService()
     {
         var firstCount = await DatabaseClient.GetFirstTableCount();

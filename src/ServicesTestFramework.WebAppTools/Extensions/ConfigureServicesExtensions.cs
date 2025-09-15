@@ -40,6 +40,7 @@ public static class ConfigureServicesExtensions
         where TImplementation : class, TService
     {
         var descriptor = services.FindServiceDescriptor<TService>();
+
         services.RemoveAll<TService>();
 
         switch (descriptor.Lifetime)

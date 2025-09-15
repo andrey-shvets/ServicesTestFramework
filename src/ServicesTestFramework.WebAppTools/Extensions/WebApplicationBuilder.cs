@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Hosting;
+﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.EntityFrameworkCore;
@@ -101,10 +100,9 @@ public class WebApplicationBuilder<TEntryPoint> where TEntryPoint : class
     /// <summary>
     /// Mocks authentication. Use in combination with <see cref="FakeToken"/>.
     /// </summary>
-    /// <param name="authScheme">Authentication scheme to override.</param>
-    public WebApplicationBuilder<TEntryPoint> AddMockAuthentication(string authScheme = JwtBearerDefaults.AuthenticationScheme)
+    public WebApplicationBuilder<TEntryPoint> AddMockAuthentication()
     {
-        ServicesConfigurations.Add(services => services.AddMockAuthentication(authScheme));
+        ServicesConfigurations.Add(services => services.AddMockAuthentication());
 
         return this;
     }

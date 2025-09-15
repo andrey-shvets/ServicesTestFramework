@@ -59,7 +59,25 @@ This approach is not recommended. For reliable tests, they should be executed ag
 
 ### Authentication Mock
 
-**TBA**
+`AddMockAuthentication()` replaces the existing authentication scheme with a mock one.
+To mock claims use `FakeToken` class.
+
+Example
+```
+var token = FakeToken.WithClaim("customClaim").AndClaim("additionalClaim", "42").AndJwtId();
+var response = await Client.GetSomething(request, token);
+```
+Becuase mock uses the `Bearer` scheme, it will not work with controllers like this
+```
+    [HttpGet("status")]
+    [Authorize(CookieAuthenticationDefaults.AuthenticationScheme)]
+    public ActionResult<string> GetStatus()
+    {
+        ...
+    }
+```
+
+Check tests for usage examples.
 
 # Tests
 
