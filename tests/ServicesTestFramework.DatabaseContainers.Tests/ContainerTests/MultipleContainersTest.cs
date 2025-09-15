@@ -1,9 +1,8 @@
 ﻿using ServicesTestFramework.DatabaseContainers.Containers;
-using Xunit;
 
 namespace ServicesTestFramework.DatabaseContainers.Tests.ContainerTests;
 
-public class MultipleContainersTest : IAsyncLifetime
+public class MultipleContainersTest
 {
     private const string DatabaseName = "testdb";
     private const string UserName = "testUser";
@@ -12,21 +11,20 @@ public class MultipleContainersTest : IAsyncLifetime
     private MySqlTestContainer TestContainer { get; set; }
     private MySqlTestContainer AdditionalTestContainer { get; set; }
 
-    public Task InitializeAsync() => Task.CompletedTask;
-
-    public async Task DisposeAsync()
+    [After(Test)]
+    public async Task TestTeardown()
     {
         await TestContainer.StopContainer();
         await AdditionalTestContainer.StopContainer();
     }
 
-    [Fact]
+    [Test]
     public async Task StartContainer_CanStartMultipleContainers_IfMountSourceFoldersAreDifferent()
     {
         TestContainer = await new MySqlContainerBuilder()
-                            .SetDatabaseConfiguration(DatabaseName, UserName, Password)
-                            .SetMountSourceFolder("mysqlData1")
-                            .StartContainer();
+            .SetDatabaseConfiguration(DatabaseName, UserName, Password)
+            .SetMountSourceFolder("mysqlData1")
+            .StartContainer();
 
         var connectionString = TestContainer.Connection.ConnectionString;
 
@@ -35,9 +33,9 @@ public class MultipleContainersTest : IAsyncLifetime
         connectionString.Should().Contain($"Pwd={Password}");
 
         AdditionalTestContainer = await new MySqlContainerBuilder()
-                                      .SetDatabaseConfiguration(DatabaseName, UserName, Password)
-                                      .SetMountSourceFolder("mysqlData2")
-                                      .StartContainer();
+            .SetDatabaseConfiguration(DatabaseName, UserName, Password)
+            .SetMountSourceFolder("mysqlData2")
+            .StartContainer();
 
         connectionString = TestContainer.Connection.ConnectionString;
 

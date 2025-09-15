@@ -1,12 +1,11 @@
 ﻿using System.Data.Common;
 using Microsoft.Extensions.Configuration;
-using MySqlConnector;
+using MySql.Data.MySqlClient;
 using ServicesTestFramework.DatabaseContainers.Docker;
-using Xunit;
 
 namespace ServicesTestFramework.DatabaseContainers.Tests.Fixtures;
 
-public class MySqlDatabaseFixture : IAsyncLifetime
+public static class MySqlDatabaseFixture
 {
     private const string DatabaseName = "testdb";
     public const string Username = "testUser";
@@ -15,9 +14,10 @@ public class MySqlDatabaseFixture : IAsyncLifetime
 
     private const string DefaultScenarioPlaceholder = "First";
 
-    public DbConnection Connection { get; set; }
+    public static DbConnection Connection { get; private set; }
 
-    public async Task InitializeAsync()
+    [Before(TestSession)]
+    public static async Task TestSessionSetup()
     {
         var environment = ReadTestEnvironmentConfig();
 
@@ -28,6 +28,9 @@ public class MySqlDatabaseFixture : IAsyncLifetime
 
         ApplyMigrations(Connection);
     }
+
+    [After(TestSession)]
+    public static Task TestSessionTeardown() => Task.CompletedTask;
 
     private static MySqlConnection ConnectToContainer(TestEnvironmentOptions environment)
     {
@@ -87,6 +90,4 @@ public class MySqlDatabaseFixture : IAsyncLifetime
 
         return configuration.GetSection(TestEnvironmentOptions.Environment).Get<TestEnvironmentOptions>() ?? new TestEnvironmentOptions { InitializeDatabaseFromSnapshot = true };
     }
-
-    public Task DisposeAsync() => Task.CompletedTask;
 }

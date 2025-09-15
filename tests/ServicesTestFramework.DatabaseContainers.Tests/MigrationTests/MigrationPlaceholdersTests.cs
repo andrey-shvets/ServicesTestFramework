@@ -1,18 +1,17 @@
 ﻿using ServicesTestFramework.DatabaseContainers.Containers;
-using Xunit;
+using TUnit.Core;
 using static ServicesTestFramework.DatabaseContainers.Tests.Helpers.TestContainerHelpers;
 
 namespace ServicesTestFramework.DatabaseContainers.Tests.MigrationTests;
 
-public class MigrationPlaceholdersTests : IAsyncLifetime
+public class MigrationPlaceholdersTests
 {
     private MySqlTestContainer TestContainer { get; set; }
 
-    public Task InitializeAsync() => Task.CompletedTask;
-
+    [After(Test)]
     public async Task DisposeAsync() => await TestContainer.StopContainer();
 
-    [Fact]
+    [Test]
     public async Task ApplyMigrations_StartsDatabaseInContainer_WithoutSpecifiedPlaceholders()
     {
         TestContainer = await StartDatabaseInContainer(placeholders: null);
@@ -29,7 +28,7 @@ public class MigrationPlaceholdersTests : IAsyncLifetime
         hotfixCount.Should().Be(0);
     }
 
-    [Fact]
+    [Test]
     public async Task ApplyMigrations_StartsDatabaseInContainer_UsesSpecifiedPlaceholders()
     {
         var placeholders = new Dictionary<string, string> { ["${Scenario}"] = "AdditionalData" };

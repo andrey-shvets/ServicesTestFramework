@@ -1,5 +1,4 @@
 ﻿using ServicesTestFramework.DatabaseContainers.Docker;
-using Xunit;
 
 namespace ServicesTestFramework.DatabaseContainers.Tests.ContainerTests;
 
@@ -9,14 +8,14 @@ public class DockerHelperTests
     private const string UserName = "testUser";
     private const string Password = "123456789";
 
-    [Fact]
+    [Test]
     public async Task GetMysqlPortForContainer_ReturnsPortOfMysqlDatabase_RunningInTheSpecifiedContainer()
     {
         var containerName = $"testContainer_{DateTime.Now.Ticks}";
         var testContainer = await new MySqlContainerBuilder()
-                                .SetDatabaseConfiguration(DatabaseName, UserName, Password)
-                                .SetContainerName(containerName)
-                                .StartContainer();
+            .SetDatabaseConfiguration(DatabaseName, UserName, Password)
+            .SetContainerName(containerName)
+            .StartContainer();
 
         var testContainerConnectionString = testContainer.Connection.ConnectionString;
 
@@ -30,14 +29,14 @@ public class DockerHelperTests
         Assert.Throws<InvalidOperationException>(() => DockerTools.GetMysqlPortForContainer(containerNameWithoutLastCharacter));
     }
 
-    [Fact]
+    [Test]
     public async Task GetMysqlPortForContainerByRegex_ReturnsPortOfMysqlDatabase_RunningInTheSpecifiedContainer()
     {
         var containerName = $"testContainerRegex_{DateTime.Now.Ticks}";
         var testContainer = await new MySqlContainerBuilder()
-                                .SetDatabaseConfiguration(DatabaseName, UserName, Password)
-                                .SetContainerName(containerName)
-                                .StartContainer();
+            .SetDatabaseConfiguration(DatabaseName, UserName, Password)
+            .SetContainerName(containerName)
+            .StartContainer();
 
         var testContainerConnectionString = testContainer.Connection.ConnectionString;
 
@@ -53,14 +52,14 @@ public class DockerHelperTests
         Assert.Throws<InvalidOperationException>(() => DockerTools.GetMysqlPortForContainerByRegex(nonExistentContainerPattern));
     }
 
-    [Fact]
+    [Test]
     public async Task RemoveContainerIfExists_StopsSpecifiedContainer()
     {
         var containerName = $"testStopContainer_{DateTime.Now.Ticks}";
         _ = await new MySqlContainerBuilder()
-                .SetDatabaseConfiguration(DatabaseName, UserName, Password)
-                .SetContainerName(containerName)
-                .StartContainer();
+            .SetDatabaseConfiguration(DatabaseName, UserName, Password)
+            .SetContainerName(containerName)
+            .StartContainer();
 
         DockerTools.ContainerExists(containerName).Should().BeTrue();
         DockerTools.RemoveContainerIfExists(containerName);
@@ -69,14 +68,14 @@ public class DockerHelperTests
         DockerTools.RemoveContainerIfExists(containerName);
     }
 
-    [Fact]
+    [Test]
     public async Task ContainerIsReusable_ReturnsTrueForRunningContainer()
     {
         var containerName = $"testReusableContainer_{DateTime.Now.Ticks}";
         _ = await new MySqlContainerBuilder()
-                .SetDatabaseConfiguration(DatabaseName, UserName, Password)
-                .SetContainerName(containerName)
-                .StartContainer();
+            .SetDatabaseConfiguration(DatabaseName, UserName, Password)
+            .SetContainerName(containerName)
+            .StartContainer();
 
         DockerTools.ContainerIsReusable(containerName).Should().BeTrue();
 

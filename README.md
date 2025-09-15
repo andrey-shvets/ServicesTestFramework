@@ -59,7 +59,12 @@ This approach is not recommended. For reliable tests, they should be executed ag
 
 ### Authentication Mock
 
-**TBA**
+`AddMockAuthentication()` replaces the existing authentication scheme with a mock one.
+To mock claims use `FakeToken` class.
+Example
+```
+var token = FakeToken.WithClaim(claimType).AndClaim(claimType, "42").AndClaim(additionalClaimType, "value").AndJwtId();
+```
 
 # Tests
 

@@ -1,9 +1,8 @@
 ﻿using ServicesTestFramework.DatabaseContainers.Containers;
-using Xunit;
 
 namespace ServicesTestFramework.DatabaseContainers.Tests.MigrationTests;
 
-public class DatabaseMigrationTests : IAsyncLifetime
+public class DatabaseMigrationTests
 {
     private const string DatabaseName = "testdb";
     private const string UserName = "testUser";
@@ -13,11 +12,10 @@ public class DatabaseMigrationTests : IAsyncLifetime
 
     private MySqlTestContainer TestContainer { get; set; }
 
-    public Task InitializeAsync() => Task.CompletedTask;
-
+    [After(Test)]
     public async Task DisposeAsync() => await TestContainer.StopContainer();
 
-    [Fact]
+    [Test]
     public async Task ApplyMigrations_AppliesScriptsFromProvidedFoldersInAscendingOrder()
     {
         var containerBuilder = new MySqlContainerBuilder()
@@ -38,7 +36,7 @@ public class DatabaseMigrationTests : IAsyncLifetime
         appliedMigrations.Should().BeInAscendingOrder();
     }
 
-    [Fact]
+    [Test]
     public async Task ApplyMigrations_UsingSnapshotWithAllMigrations_DoesNotApplyAnyAdditionalMigrations()
     {
         var containerBuilder = new MySqlContainerBuilder()
@@ -58,7 +56,7 @@ public class DatabaseMigrationTests : IAsyncLifetime
         appliedMigrations.Should().BeEmpty();
     }
 
-    [Fact]
+    [Test]
     public async Task ApplyMigrations_UsingSnapshot_ApplesOnlyNewMigrations()
     {
         var containerBuilder = new MySqlContainerBuilder()

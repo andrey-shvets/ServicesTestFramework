@@ -2,32 +2,30 @@
 using Docker.DotNet;
 using MySqlConnector;
 using ServicesTestFramework.DatabaseContainers.Containers;
-using Xunit;
 
 namespace ServicesTestFramework.DatabaseContainers.Tests.ContainerTests;
 
-public class MySqlContainerTests : IAsyncLifetime
+public class MySqlContainerTests
 {
     private const string DatabaseName = "testdb";
     private const string UserName = "testUser";
     private const string Password = "123456789";
     private MySqlTestContainer TestContainer { get; set; }
 
-    public Task InitializeAsync() => Task.CompletedTask;
-
+    [After(Test)]
     public async Task DisposeAsync()
     {
         if (TestContainer is not null)
             await TestContainer.StopContainer();
     }
 
-    [Fact]
+    [Test]
     public async Task StartContainer_CreatesContainerWithDatabaseInitialized()
     {
         TestContainer = await new MySqlContainerBuilder()
-                            .SetDatabaseConfiguration(DatabaseName, UserName, Password)
-                            .SetImageTagName("mysql:8.0.28")
-                            .StartContainer();
+            .SetDatabaseConfiguration(DatabaseName, UserName, Password)
+            .SetImageTagName("mysql:8.0.28")
+            .StartContainer();
 
         var connectionString = TestContainer.Connection.ConnectionString;
 
@@ -36,7 +34,7 @@ public class MySqlContainerTests : IAsyncLifetime
         connectionString.Should().Contain($"Pwd={Password}");
     }
 
-    [Fact]
+    [Test]
     public async Task StopContainer_DisposesOfContainerAndAllowsToCreateNewContainerRunningFromTheSameMountFolder()
     {
         var containerBuilder = new MySqlContainerBuilder()
@@ -45,9 +43,7 @@ public class MySqlContainerTests : IAsyncLifetime
         TestContainer = await containerBuilder.StartContainer();
 
         var stopContainerTask = TestContainer.StopContainer();
-#pragma warning disable VSTHRD103 // Call async methods when in an async method
-        stopContainerTask.Wait();
-#pragma warning restore VSTHRD103 // Call async methods when in an async method
+        await stopContainerTask;
 
         var connection = new MySqlConnection(TestContainer.Connection.ConnectionString);
         Action openConnection = () => connection.Open();
@@ -63,24 +59,24 @@ public class MySqlContainerTests : IAsyncLifetime
         connectionString.Should().Contain($"Pwd={Password}");
     }
 
-    [Theory]
-    [InlineData(null)]
-    [InlineData("")]
+    [Test]
+    [Arguments(null)]
+    [Arguments("")]
     public void SetImageTagName_ThrowsArgumentException_ForInvalidImageTag(string image)
     {
-        _ = Assert.Throws<ArgumentException>(() => new MySqlContainerBuilder().SetImageTagName(image));
+        Assert.Throws<ArgumentException>(() => new MySqlContainerBuilder().SetImageTagName(image));
     }
 
-    [Theory]
-    [InlineData("non/existing/image:9.8.7")]
-    [InlineData("mysql:999.42.24")]
+    [Test]
+    [Arguments("non/existing/image:9.8.7")]
+    [Arguments("mysql:999.42.24")]
     public async Task SetImageTagName_ThrowsDockerImageNotFoundException_ForNonExistentImage(string image)
     {
         var ex = await Assert.ThrowsAsync<DockerApiException>(async () => await new MySqlContainerBuilder()
-                                                                                        .SetDatabaseConfiguration(DatabaseName, UserName, Password)
-                                                                                        .SetImageTagName(image)
-                                                                                        .StartContainer());
+            .SetDatabaseConfiguration(DatabaseName, UserName, Password)
+            .SetImageTagName(image)
+            .StartContainer());
 
-        ex.StatusCode.Should().Be(HttpStatusCode.NotFound);
+        await Assert.That(ex.StatusCode).IsEqualTo(HttpStatusCode.NotFound);
     }
 }
