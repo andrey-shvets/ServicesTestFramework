@@ -1,31 +1,27 @@
 ﻿using System.Net;
-using FluentAssertions;
 using RestEase;
 using ServicesTestFramework.ExampleApi;
 using ServicesTestFramework.WebAppTools.Authentication;
 using ServicesTestFramework.WebAppTools.Extensions;
 using ServicesTestFramework.WebAppTools.Tests.Controllers;
-using Xunit;
-using Xunit.Abstractions;
 
 namespace ServicesTestFramework.WebAppTools.Tests.Authentication;
 
-public class AuthenticationTests : BaseTest, IClassFixture<WebApplicationBuilder<Startup>>
+public class AuthenticationTests
 {
-    private IFirstController Client { get; }
+    private static IFirstController Client { get; set; }
 
-    public AuthenticationTests(WebApplicationBuilder<Startup> builder, ITestOutputHelper outputHelper)
-        : base(outputHelper)
+    [Before(Class)]
+    public static void ClassSetup()
     {
-        var httpClient = builder
+        var httpClient = new WebApplicationBuilder<Startup>()
             .AddMockAuthentication()
-            .AddXUnitLogger(OutputHelper)
             .CreateClient();
 
         Client = httpClient.ClientFor<IFirstController>();
     }
 
-    [Fact]
+    [Test]
     public async Task FromSubjectId_SetsSpecifiedIdToAuthenticatedUser()
     {
         var expectedUserId = Guid.NewGuid();
@@ -34,12 +30,12 @@ public class AuthenticationTests : BaseTest, IClassFixture<WebApplicationBuilder
         userId.Should().Be(expectedUserId.ToString());
     }
 
-    [Fact]
+    [Test]
     public async Task FromSubjectId_SetsSpecifiedPolicyToAuthenticatedUser()
     {
         var expectedUserId = Guid.NewGuid();
 
-        var ex = await Assert.ThrowsAsync<ApiException>(async () => await Client.GetUserIdWithPolicy(FakeToken.WithJwtId(expectedUserId)));
+        var ex = await Assert.ThrowsAsync<ApiException>(() => Client.GetUserIdWithPolicy(FakeToken.WithJwtId(expectedUserId)));
         ex.StatusCode.Should().Be(HttpStatusCode.Forbidden);
 
         var requiredPolicy = "TestPolicy";

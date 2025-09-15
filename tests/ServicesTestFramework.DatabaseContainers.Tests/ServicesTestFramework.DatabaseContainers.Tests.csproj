@@ -23,25 +23,12 @@
 
 	<ItemGroup>
 		<PackageReference Include="Ductus.FluentDocker" Version="2.85.0" />
-		<PackageReference Include="FluentAssertions" Version="8.6.0" />
+		<PackageReference Include="AwesomeAssertions" Version="9.1.0" />
 		<PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="9.0.8" />
 		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
-		<PackageReference Include="Microsoft.VisualStudio.Threading.Analyzers" Version="17.14.15">
-		  <PrivateAssets>all</PrivateAssets>
-		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-		</PackageReference>
-		<PackageReference Include="Moq" Version="4.20.72" />
 		<PackageReference Include="RestEase" Version="1.6.4" />
-		<PackageReference Include="StyleCop.Analyzers" Version="1.1.118">
-		  <PrivateAssets>all</PrivateAssets>
-		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-		</PackageReference>
 		<PackageReference Include="xunit" Version="2.9.3" />
 		<PackageReference Include="xunit.runner.visualstudio" Version="3.1.4">
-			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-			<PrivateAssets>all</PrivateAssets>
-		</PackageReference>
-		<PackageReference Include="coverlet.collector" Version="6.0.4">
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 			<PrivateAssets>all</PrivateAssets>
 		</PackageReference>
@@ -73,6 +60,10 @@
 
 	<ItemGroup>
 	  <Folder Include="Database\Datasets\" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Using Include="AwesomeAssertions" />
 	</ItemGroup>
 
 </Project>

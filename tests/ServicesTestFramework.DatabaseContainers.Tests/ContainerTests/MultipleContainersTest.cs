@@ -1,5 +1,4 @@
-﻿using FluentAssertions;
-using ServicesTestFramework.DatabaseContainers.Containers;
+﻿using ServicesTestFramework.DatabaseContainers.Containers;
 using Xunit;
 
 namespace ServicesTestFramework.DatabaseContainers.Tests.ContainerTests;

@@ -1,28 +1,19 @@
 ﻿using System.Net;
-using FluentAssertions;
 using ServicesTestFramework.ExampleApi;
 using ServicesTestFramework.WebAppTools.Extensions;
 using ServicesTestFramework.WebAppTools.Tests.Controllers;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace ServicesTestFramework.WebAppTools.Tests;
 
 public class WebApplicationFactoryExtensionsTests : BaseTest, IClassFixture<WebApplicationBuilder<Startup>>
 {
-    private WebApplicationBuilder<Startup> WebAppBuilder { get; }
+    private WebApplicationBuilder<Startup> WebAppBuilder { get; } = new WebApplicationBuilder<Startup>();
 
-    public WebApplicationFactoryExtensionsTests(WebApplicationBuilder<Startup> builder, ITestOutputHelper outputHelper)
-        : base(outputHelper)
-    {
-        WebAppBuilder = builder;
-    }
-
-    [Fact]
+    [Test]
     public async Task WithWebHostConfiguration_CreatesWorkingServiceThatCanBeAccessedThroughHttpClient()
     {
         var client = WebAppBuilder
-            .AddXUnitLogger(OutputHelper)
             .CreateClient();
 
         var firstClient = client.ClientFor<IFirstController>();
@@ -35,7 +26,7 @@ public class WebApplicationFactoryExtensionsTests : BaseTest, IClassFixture<WebA
         secondResponse.StatusCode.Should().Be(HttpStatusCode.OK);
     }
 
-    [Fact]
+    [Test]
     public async Task WithWebHostConfiguration_AllowsToAddAppConfigurationSources()
     {
         Environment.SetEnvironmentVariable("TestOptions:TestKey", "valueFromEnvironmentShouldBeOverriden");
@@ -44,7 +35,6 @@ public class WebApplicationFactoryExtensionsTests : BaseTest, IClassFixture<WebA
         var client = WebAppBuilder
             .AddConfiguration("appsettings.test.json")
             .AddConfiguration("InMemoryConfig", "inMemoryValue")
-            .AddXUnitLogger(OutputHelper)
             .CreateClient();
 
         var secondClient = client.ClientFor<ISecondController>();

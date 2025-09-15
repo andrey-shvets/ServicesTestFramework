@@ -1,28 +1,19 @@
 ﻿using RestEase;
 using ServicesTestFramework.WebAppTools.Exceptions;
-using Xunit.Abstractions;
 
 namespace ServicesTestFramework.WebAppTools.Tests;
 
-public abstract class BaseTest : IDisposable
+public abstract class BaseTest
 {
-    protected ITestOutputHelper OutputHelper { get; }
+    [Before(Assembly)]
+    public static void AssemblySetup() => ExceptionInterceptor.InitializeExceptionCapture();
 
-    static BaseTest()
-    {
-        ExceptionInterceptor.InitializeExceptionCapture();
-    }
-
-    protected BaseTest(ITestOutputHelper outputHelper)
-    {
-        OutputHelper = outputHelper;
-    }
-
-    public virtual void Dispose()
+    [After(Test)]
+    public async Task TestTeardown()
     {
         if (ExceptionInterceptor.LastCapturedException is ApiException apiException && !string.IsNullOrWhiteSpace(apiException.Content))
-            OutputHelper?.WriteLine($"ApiException content: {apiException.Content}");
+            Console.WriteLine($"ApiException content: {apiException.Content}");
 
-        GC.SuppressFinalize(this);
+        await Task.FromResult(0);
     }
 }

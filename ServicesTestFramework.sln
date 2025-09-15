@@ -1,13 +1,14 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.0.32014.148
+# Visual Studio Version 18
+VisualStudioVersion = 18.0.11010.61 d18.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{957BDFE1-A2B9-47CB-9771-838903E43663}"
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
 		build-and-test-pipeline.yml = build-and-test-pipeline.yml
 		coverlet.runsettings.xml = coverlet.runsettings.xml
+		Directory.Build.props = Directory.Build.props
 		GitVersion.yml = GitVersion.yml
 		nuget-pipeline.yml = nuget-pipeline.yml
 		README.md = README.md

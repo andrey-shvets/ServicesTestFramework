@@ -4,5 +4,5 @@ namespace ServicesTestFramework.WebAppTools.Tests.Services;
 
 public class ScopedServiceMock : ITestScopedService
 {
-    public string GetServiceName() => "mockScopedService";
+    public string GetServiceName() => nameof(ScopedServiceMock);
 }

@@ -1,5 +1,4 @@
-﻿using FluentAssertions;
-using ServicesTestFramework.DatabaseContainers.Tests.Controllers;
+﻿using ServicesTestFramework.DatabaseContainers.Tests.Controllers;
 using ServicesTestFramework.DatabaseContainers.Tests.Fixtures;
 using ServicesTestFramework.ExampleApi;
 using ServicesTestFramework.WebAppTools.Extensions;

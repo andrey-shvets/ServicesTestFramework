@@ -1,66 +1,61 @@
-﻿using FluentAssertions;
-using Microsoft.AspNetCore.Mvc.Testing;
-using Moq;
+﻿using Microsoft.AspNetCore.Mvc.Testing;
+using NSubstitute;
 using ServicesTestFramework.ExampleApi;
 using ServicesTestFramework.ExampleApi.Services;
 using ServicesTestFramework.ExampleApi.Services.Interfaces;
 using ServicesTestFramework.WebAppTools.Extensions;
 using ServicesTestFramework.WebAppTools.Tests.Controllers;
 using ServicesTestFramework.WebAppTools.Tests.Services;
-using Xunit;
-using Xunit.Abstractions;
 
 namespace ServicesTestFramework.WebAppTools.Tests;
 
-public class ConfigureServicesExtensionsTests : BaseTest, IClassFixture<WebApplicationFactory<Startup>>
+public class ConfigureServicesExtensionsTests : BaseTest
 {
-    private WebApplicationFactory<Startup> Factory { get; }
+    private WebApplicationFactory<Startup> Factory { get; } = new WebApplicationFactory<Startup>();
 
-    public ConfigureServicesExtensionsTests(WebApplicationFactory<Startup> builder, ITestOutputHelper outputHelper)
-        : base(outputHelper)
-    {
-        Factory = builder;
-    }
-
-    [Fact]
+    [Test]
     public void Swap_MissingServiceTypeWithInstance_ThrowsInvalidOperationExceptionOnClientCreation()
     {
         var builder = Factory.WithBuilder()
-            .Swap<IAbsentService>(Mock.Of<IAbsentService>())
-            .AddXUnitLogger(OutputHelper);
+            .Swap<IAbsentService>(Substitute.For<IAbsentService>());
 
         Assert.Throws<InvalidOperationException>(() => builder.CreateClient());
     }
 
-    [Fact]
+    [Test]
     public void Swap_MissingServiceTypeWithImplementation_ThrowsInvalidOperationExceptionOnClientCreation()
     {
         var builder = Factory.WithBuilder()
-            .Swap<IAbsentService, AbsentService>()
-            .AddXUnitLogger(OutputHelper);
+            .Swap<IAbsentService, AbsentService>();
 
         Assert.Throws<InvalidOperationException>(() => builder.CreateClient());
     }
 
-    [Fact]
+    [Test]
     public void Swap_MissingServiceTypeWithImplementationFactory_ThrowsInvalidOperationExceptionOnClientCreation()
     {
         var builder = Factory.WithBuilder()
-            .Swap<IAbsentService>(_ => Mock.Of<IAbsentService>())
-            .AddXUnitLogger(OutputHelper);
+            .Swap<IAbsentService>(_ => Substitute.For<IAbsentService>());
 
         Assert.Throws<InvalidOperationException>(() => builder.CreateClient());
     }
 
-    [Fact]
+    [Test]
     public async Task Swap_ChangesConfiguredServiceToProvidedInstance()
     {
+        var scopedMock = Substitute.For<ITestScopedService>();
+        var singletonMock = Substitute.For<ITestSingletonService>();
+        var transientMock = Substitute.For<ITestTransientService>();
+
         var client = Factory.WithBuilder()
-            .Swap<ITestScopedService>(Mock.Of<ITestScopedService>(s => s.GetServiceName() == "mockScopedService"))
-            .Swap<ITestSingletonService>(Mock.Of<ITestSingletonService>(s => s.GetServiceName() == "mockSingletonService"))
-            .Swap<ITestTransientService>(Mock.Of<ITestTransientService>(s => s.GetServiceName() == "mockTransientService"))
-            .AddXUnitLogger(OutputHelper)
+            .Swap<ITestScopedService>(scopedMock)
+            .Swap<ITestSingletonService>(singletonMock)
+            .Swap<ITestTransientService>(transientMock)
             .CreateClient();
+
+        scopedMock.GetServiceName().Returns("mockScopedService");
+        singletonMock.GetServiceName().Returns("mockSingletonService");
+        transientMock.GetServiceName().Returns("mockTransientService");
 
         var firstClient = client.ClientFor<IFirstController>();
 
@@ -73,14 +68,13 @@ public class ConfigureServicesExtensionsTests : BaseTest, IClassFixture<WebAppli
         transientValue.Should().Be("mockTransientService");
     }
 
-    [Fact]
+    [Test]
     public async Task Swap_ChangesConfiguredServiceToProvidedImplementation()
     {
         var client = Factory.WithBuilder()
             .Swap<ITestScopedService, ScopedServiceMock>()
             .Swap<ITestSingletonService, SingletonServiceMock>()
             .Swap<ITestTransientService, TransientServiceMock>()
-            .AddXUnitLogger(OutputHelper)
             .CreateClient();
 
         var firstClient = client.ClientFor<IFirstController>();
@@ -89,20 +83,27 @@ public class ConfigureServicesExtensionsTests : BaseTest, IClassFixture<WebAppli
         var singletonValue = await firstClient.GetSingletonServiceName();
         var transientValue = await firstClient.GetTransientServiceName();
 
-        scopedValue.Should().Be("mockScopedService");
-        singletonValue.Should().Be("mockSingletonService");
-        transientValue.Should().Be("mockTransientService");
+        scopedValue.Should().Be("ScopedServiceMock");
+        singletonValue.Should().Be("SingletonServiceMock");
+        transientValue.Should().Be("TransientServiceMock");
     }
 
-    [Fact]
+    [Test]
     public async Task Swap_ChangesConfiguredServiceToProvidedImplementationFactory()
     {
+        var scopedMock = Substitute.For<ITestScopedService>();
+        var singletonMock = Substitute.For<ITestSingletonService>();
+        var transientMock = Substitute.For<ITestTransientService>();
+
         var client = Factory.WithBuilder()
-            .Swap<ITestScopedService>(_ => Mock.Of<ITestScopedService>(s => s.GetServiceName() == "mockScopedService"))
-            .Swap<ITestSingletonService>(_ => Mock.Of<ITestSingletonService>(s => s.GetServiceName() == "mockSingletonService"))
-            .Swap<ITestTransientService>(_ => Mock.Of<ITestTransientService>(s => s.GetServiceName() == "mockTransientService"))
-            .AddXUnitLogger(OutputHelper)
+            .Swap<ITestScopedService>(_ => scopedMock)
+            .Swap<ITestSingletonService>(_ => singletonMock)
+            .Swap<ITestTransientService>(_ => transientMock)
             .CreateClient();
+
+        scopedMock.GetServiceName().Returns("mockScopedService");
+        singletonMock.GetServiceName().Returns("mockSingletonService");
+        transientMock.GetServiceName().Returns("mockTransientService");
 
         var firstClient = client.ClientFor<IFirstController>();
 
@@ -115,14 +116,21 @@ public class ConfigureServicesExtensionsTests : BaseTest, IClassFixture<WebAppli
         transientValue.Should().Be("mockTransientService");
     }
 
-    [Fact]
+    [Test]
     public void GetScopedService_RetrievesServiceInstanceFromWebAppFactory()
     {
+        var scopedMock = Substitute.For<ITestScopedService>();
+        var singletonMock = Substitute.For<ITestSingletonService>();
+        var transientMock = Substitute.For<ITestTransientService>();
+
+        scopedMock.GetServiceName().Returns("mockScopedService");
+        singletonMock.GetServiceName().Returns("mockSingletonService");
+        transientMock.GetServiceName().Returns("mockTransientService");
+
         var factory = Factory.WithBuilder()
-            .Swap<ITestScopedService>(_ => Mock.Of<ITestScopedService>(s => s.GetServiceName() == "mockScopedService"))
-            .Swap<ITestSingletonService>(_ => Mock.Of<ITestSingletonService>(s => s.GetServiceName() == "mockSingletonService"))
-            .Swap<ITestTransientService>(_ => Mock.Of<ITestTransientService>(s => s.GetServiceName() == "mockTransientService"))
-            .AddXUnitLogger(OutputHelper)
+            .Swap<ITestScopedService>(_ => scopedMock)
+            .Swap<ITestSingletonService>(_ => singletonMock)
+            .Swap<ITestTransientService>(_ => transientMock)
             .Build();
 
         var scopedService = factory.Services.GetScopedService<ITestScopedService>();
@@ -138,12 +146,15 @@ public class ConfigureServicesExtensionsTests : BaseTest, IClassFixture<WebAppli
         transientServiceName.Should().Be("mockTransientService");
     }
 
-    [Fact]
+    [Test]
     public async Task Swap_ServiceWithMultipleImplementations_ChangesServiceToProvidedInstance()
     {
+        var mock = Substitute.For<IMultipleImplementationsService>();
+
+        mock.GetServiceName().Returns("mockServiceName");
+
         var client = Factory.WithBuilder()
-            .Swap<IMultipleImplementationsService>(Mock.Of<IMultipleImplementationsService>(s => s.GetServiceName() == "mockServiceName"))
-            .AddXUnitLogger(OutputHelper)
+            .Swap<IMultipleImplementationsService>(mock)
             .CreateClient();
 
         var firstClient = client.ClientFor<IFirstController>();
@@ -153,28 +164,30 @@ public class ConfigureServicesExtensionsTests : BaseTest, IClassFixture<WebAppli
         serviceName.Should().Be("mockServiceName");
     }
 
-    [Fact]
+    [Test]
     public async Task Swap_ServiceWithMultipleImplementations_ChangesServiceToProvidedImplementation()
     {
         var client = Factory.WithBuilder()
             .Swap<IMultipleImplementationsService, MultipleImplementationsServiceMock>()
-            .AddXUnitLogger(OutputHelper)
             .CreateClient();
 
         var firstClient = client.ClientFor<IFirstController>();
 
         var serviceName = await firstClient.GetMultipleImplementationsServiceName();
 
-        serviceName.Should().Be("mockServiceName");
+        serviceName.Should().Be(MultipleImplementationsServiceMock.MockValue);
     }
 
-    [Fact]
+    [Test]
     public async Task Swap_ServiceWithMultipleImplementations_ChangesServiceToProvidedImplementationFactory()
     {
+        var mock = Substitute.For<IMultipleImplementationsService>();
+
         var client = Factory.WithBuilder()
-            .Swap<IMultipleImplementationsService>(_ => Mock.Of<IMultipleImplementationsService>(s => s.GetServiceName() == "mockServiceName"))
-            .AddXUnitLogger(OutputHelper)
+            .Swap<IMultipleImplementationsService>(_ => mock)
             .CreateClient();
+
+        mock.GetServiceName().Returns("mockServiceName");
 
         var firstClient = client.ClientFor<IFirstController>();
 

@@ -15,7 +15,8 @@ internal class TestJwtAuthenticationHandler : AuthenticationHandler<JwtBearerOpt
                                         ILoggerFactory logger,
                                         UrlEncoder encoder)
         : base(options, logger, encoder)
-    { }
+    {
+    }
 
     protected override async Task<AuthenticateResult> HandleAuthenticateAsync()
     {

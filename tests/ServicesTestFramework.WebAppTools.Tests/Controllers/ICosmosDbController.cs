@@ -7,15 +7,15 @@ namespace ServicesTestFramework.WebAppTools.Tests.Controllers;
 public interface ICosmosDbController
 {
     [Post("add")]
-    public Task<Guid> Add([Query] string name, int intData);
+    Task<Guid> Add([Query] string name, int intData);
 
     [Get("get")]
-    public Task<TestDatabaseEntity> GetElement([Query] Guid id);
+    Task<TestDatabaseEntity> GetElement([Query] Guid id);
 
     [Get("getAll")]
-    public Task<IList<TestDatabaseEntity>> GetAll();
+    Task<IList<TestDatabaseEntity>> GetAll();
 
     [Get("health")]
     [AllowAnyStatusCode]
-    public Task<HttpResponseMessage> Health();
+    Task<HttpResponseMessage> Health();
 }

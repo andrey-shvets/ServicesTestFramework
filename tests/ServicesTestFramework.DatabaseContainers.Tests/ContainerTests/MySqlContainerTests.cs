@@ -1,6 +1,5 @@
 ﻿using System.Net;
 using Docker.DotNet;
-using FluentAssertions;
 using MySqlConnector;
 using ServicesTestFramework.DatabaseContainers.Containers;
 using Xunit;

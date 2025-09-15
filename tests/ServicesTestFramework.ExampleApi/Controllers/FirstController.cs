@@ -52,7 +52,7 @@ public class FirstController : ControllerBase
     {
         var claims = User.FindAll(claimType).ToList();
 
-        if (!claims.Any())
+        if (claims.Count == 0)
             return NotFound($"Failed to find any claims of type {claimType}");
 
         if (claims.Count > 1)
@@ -68,7 +68,7 @@ public class FirstController : ControllerBase
     {
         var claims = User.FindAll(claimType).ToList();
 
-        if (!claims.Any())
+        if (claims.Count == 0)
             return NotFound($"Failed to find any claims of type {claimType}");
 
         var claimValues = claims.Select(c => c.Value);

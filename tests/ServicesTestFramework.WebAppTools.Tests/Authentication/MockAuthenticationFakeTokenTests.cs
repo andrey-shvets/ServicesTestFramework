@@ -1,30 +1,26 @@
 ﻿using System.Security.Claims;
-using FluentAssertions;
 using ServicesTestFramework.ExampleApi;
 using ServicesTestFramework.WebAppTools.Authentication;
 using ServicesTestFramework.WebAppTools.Extensions;
 using ServicesTestFramework.WebAppTools.Tests.Controllers;
-using Xunit;
-using Xunit.Abstractions;
 
 namespace ServicesTestFramework.WebAppTools.Tests.Authentication;
 
-public class MockAuthenticationFakeTokenTests : BaseTest, IClassFixture<WebApplicationBuilder<Startup>>
+public class MockAuthenticationFakeTokenTests : BaseTest
 {
-    private IFirstController Client { get; }
+    private static IFirstController Client { get; set; }
 
-    public MockAuthenticationFakeTokenTests(WebApplicationBuilder<Startup> builder, ITestOutputHelper outputHelper)
-        : base(outputHelper)
+    [Before(Class)]
+    public static void ClassSetup()
     {
-        var httpClient = builder
+        var httpClient = new WebApplicationBuilder<Startup>()
             .AddMockAuthentication()
-            .AddXUnitLogger(OutputHelper)
             .CreateClient();
 
         Client = httpClient.ClientFor<IFirstController>();
     }
 
-    [Fact]
+    [Test]
     public async Task FakeToken_WithJwtId_SetsJwtNameIdentifier()
     {
         var expectedUserId = Guid.NewGuid();
@@ -33,7 +29,7 @@ public class MockAuthenticationFakeTokenTests : BaseTest, IClassFixture<WebAppli
         userId.Should().Be(expectedUserId.ToString());
     }
 
-    [Fact]
+    [Test]
     public async Task FakeToken_WithClaim_SetsSpecifiedClaimWithProvidedValue()
     {
         var claimType = "customType";
@@ -45,7 +41,7 @@ public class MockAuthenticationFakeTokenTests : BaseTest, IClassFixture<WebAppli
         actualClaimValue.Should().Be(claimValue);
     }
 
-    [Fact]
+    [Test]
     public async Task FakeToken_WithMultipleClaims_SetsSpecifiedClaims()
     {
         var claimType = "customType";
@@ -62,7 +58,7 @@ public class MockAuthenticationFakeTokenTests : BaseTest, IClassFixture<WebAppli
         userId.Should().NotBe(Guid.Empty);
     }
 
-    [Fact]
+    [Test]
     public async Task FakeToken_WithUserId_SetsUserIdClaim()
     {
         var userIdKey = "UserId";
@@ -73,7 +69,7 @@ public class MockAuthenticationFakeTokenTests : BaseTest, IClassFixture<WebAppli
         actualUserId.Should().Be(userId.ToString());
     }
 
-    [Fact]
+    [Test]
     public async Task FakeToken_AndUserId_SetsUserIdClaim()
     {
         var userIdKey = "UserId";

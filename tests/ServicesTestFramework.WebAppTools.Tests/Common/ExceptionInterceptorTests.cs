@@ -1,16 +1,21 @@
-﻿using FluentAssertions;
-using ServicesTestFramework.WebAppTools.Exceptions;
-using Xunit;
+﻿using ServicesTestFramework.WebAppTools.Exceptions;
 
 namespace ServicesTestFramework.WebAppTools.Tests.Common;
 
-public class ExceptionInterceptorTests : IDisposable
+public class ExceptionInterceptorTests
 {
     private Exception ExpectedException { get; } = new CustomTestException($"message-{DateTimeOffset.Now.Ticks}", "additional data");
 
-    public ExceptionInterceptorTests() => ExceptionInterceptor.InitializeExceptionCapture();
+    [Before(Test)]
+    public void TestSetup() => ExceptionInterceptor.InitializeExceptionCapture();
 
-    [Fact]
+    [After(Test)]
+    public async Task TestTeardown()
+    {
+        await Assert.That(ExceptionInterceptor.LastCapturedException).IsEqualTo(ExpectedException);
+    }
+
+    [Test]
     public void ExceptionInterceptor_StoresExceptionThrownByTest()
     {
         try
@@ -24,7 +29,7 @@ public class ExceptionInterceptorTests : IDisposable
         ExceptionInterceptor.LastCapturedException.Should().Be(ExpectedException);
     }
 
-    [Fact]
+    [Test]
     public async Task ExceptionInterceptor_StoresExceptionThrownByAsyncMethod()
     {
         await ExceptionThrower(ExpectedException);
@@ -43,13 +48,6 @@ public class ExceptionInterceptorTests : IDisposable
         catch
         {
         }
-    }
-
-    public void Dispose()
-    {
-        ExceptionInterceptor.LastCapturedException.Should().Be(ExpectedException);
-
-        GC.SuppressFinalize(this);
     }
 
     public class CustomTestException : Exception

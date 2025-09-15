@@ -4,5 +4,7 @@ namespace ServicesTestFramework.WebAppTools.Tests.Services;
 
 public class MultipleImplementationsServiceMock : IMultipleImplementationsService
 {
-    public string GetServiceName() => "mockServiceName";
+    public const string MockValue = "mockValue";
+
+    public string GetServiceName() => MockValue;
 }
