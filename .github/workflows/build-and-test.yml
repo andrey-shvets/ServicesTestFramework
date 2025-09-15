@@ -1,0 +1,154 @@
+name: ServicesTestFramework Test
+
+on:
+  workflow_dispatch:
+    inputs:
+      buildConfiguration:
+        description: 'Build Configuration'
+        required: true
+        default: 'Release'
+        type: choice
+        options:
+          - Release
+          - Debug
+      skipTests:
+        description: 'Skip Tests'
+        required: true
+        default: false
+        type: boolean
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    
+    env:
+      GITVERSION_VERSION: '6.4.0'
+      BUILD_PROJECT_PATH: '**/*.csproj'
+      TEST_PROJECTS_FILTER: './tests/*.Tests/*.csproj'
+      PUBLISH_WEBAPPTOOLS_PROJECT: './src/**/ServicesTestFramework.WebAppTools.csproj'
+      PUBLISH_CONTAINER_PROJECT: './src/**/ServicesTestFramework.DatabaseContainers.csproj'
+      NUGET_PACKAGES_TO_PACK: './src/**/*.csproj'
+      NUGET_PATH_TO_PUBLISH: './artifacts/NugetPackage'
+      
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '8.x'
+
+    - name: Install GitVersion
+      uses: gittools/actions/gitversion/setup@v0
+      with:
+        versionSpec: ${{ env.GITVERSION_VERSION }}
+
+    - name: Execute GitVersion
+      uses: gittools/actions/gitversion/execute@v0
+      id: gitversion
+
+    - name: Set package version
+      run: |
+        if [ "${{ github.ref_name }}" = "main" ]; then
+          echo "PACKAGE_VERSION_NUMBER=${{ steps.gitversion.outputs.majorMinorPatch }}" >> $GITHUB_ENV
+          echo "IS_MAIN_BRANCH=true" >> $GITHUB_ENV
+        else
+          echo "PACKAGE_VERSION_NUMBER=${{ steps.gitversion.outputs.legacySemVer }}" >> $GITHUB_ENV
+          echo "IS_MAIN_BRANCH=false" >> $GITHUB_ENV
+        fi
+
+    - name: Restore dependencies
+      run: dotnet restore ${{ env.BUILD_PROJECT_PATH }}
+
+    - name: Build projects
+      run: dotnet build ${{ env.BUILD_PROJECT_PATH }} --no-restore --configuration ${{ inputs.buildConfiguration }}
+
+    - name: Run tests
+      if: ${{ !inputs.skipTests }}
+      run: |
+        dotnet test ${{ env.TEST_PROJECTS_FILTER }} \
+          --configuration ${{ inputs.buildConfiguration }} \
+          --collect:"XPlat Code Coverage" \
+          --settings "./coverlet.runsettings.xml" \
+          --no-build
+
+    - name: Install ReportGenerator
+      if: ${{ !inputs.skipTests }}
+      run: dotnet tool install -g dotnet-reportgenerator-globaltool
+
+    - name: Merge code coverage reports
+      if: ${{ !inputs.skipTests }}
+      run: |
+        reportgenerator \
+          -reports:"${{ runner.temp }}/**/coverage.cobertura.xml" \
+          -targetdir:"./coverage" \
+          -reporttypes:"Cobertura" \
+          -verbosity:"Verbose"
+
+    - name: Upload coverage reports to Codecov
+      if: ${{ !inputs.skipTests }}
+      uses: codecov/codecov-action@v4
+      with:
+        file: ./coverage/Cobertura.xml
+        fail_ci_if_error: false
+
+    - name: Create artifacts directory
+      run: mkdir -p ./artifacts/Output
+
+    - name: Publish WebAppTools project
+      run: |
+        dotnet publish ${{ env.PUBLISH_WEBAPPTOOLS_PROJECT }} \
+          -o ./artifacts/Output/WebAppTools \
+          --configuration Release \
+          --no-build
+
+    - name: Publish DatabaseContainers project
+      run: |
+        dotnet publish ${{ env.PUBLISH_CONTAINER_PROJECT }} \
+          -o ./artifacts/Output/DatabaseContainers \
+          --configuration Release \
+          --no-build
+
+    - name: Create zip archives
+      run: |
+        cd ./artifacts/Output
+        zip -r WebAppTools.zip WebAppTools/
+        zip -r DatabaseContainers.zip DatabaseContainers/
+
+    - name: Create NuGet packages directory
+      run: mkdir -p ${{ env.NUGET_PATH_TO_PUBLISH }}
+
+    - name: Pack NuGet packages
+      run: |
+        for project in ${{ env.NUGET_PACKAGES_TO_PACK }}; do
+          if [ -f "$project" ]; then
+            dotnet pack "$project" \
+              --output ${{ env.NUGET_PATH_TO_PUBLISH }} \
+              --configuration Release \
+              --no-build \
+              --include-symbols \
+              --include-source \
+              -p:PackageVersion=${{ env.PACKAGE_VERSION_NUMBER }} \
+              -p:IncludeReferencedProjects=true \
+              -p:SymbolPackageFormat=snupkg
+          fi
+        done
+
+    - name: Upload build artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: build-artifacts-${{ github.run_number }}
+        path: |
+          ./artifacts/Output/*.zip
+          ${{ env.NUGET_PATH_TO_PUBLISH }}/**/*.nupkg
+          ${{ env.NUGET_PATH_TO_PUBLISH }}/**/*.snupkg
+
+    - name: Upload coverage artifact
+      if: ${{ !inputs.skipTests }}
+      uses: actions/upload-artifact@v4
+      with:
+        name: coverage-report-${{ github.run_number }}
+        path: ./coverage/
