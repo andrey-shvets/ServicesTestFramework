@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 18
-VisualStudioVersion = 18.0.11010.61 d18.0
+VisualStudioVersion = 18.0.11010.61
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{957BDFE1-A2B9-47CB-9771-838903E43663}"
 	ProjectSection(SolutionItems) = preProject
@@ -25,6 +25,13 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ServicesTestFramework.WebAppTools", "src\ServicesTestFramework.WebAppTools\ServicesTestFramework.WebAppTools.csproj", "{7DDF5822-6620-41DE-9A39-D3B2CC6083F2}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ServicesTestFramework.DatabaseContainers", "src\ServicesTestFramework.DatabaseContainers\ServicesTestFramework.DatabaseContainers.csproj", "{2FBEBF2E-01E6-47D5-86EE-2F1E1A697789}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "infrastructure", "infrastructure", "{AA436116-ACA9-48E3-8FD8-966ABC10BEF1}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "azure", "azure", "{BE41B193-F454-4329-8FE5-DEFBBA30BAEB}"
+	ProjectSection(SolutionItems) = preProject
+		infrastructure\azure\build-and-test-pipeline.yml = infrastructure\azure\build-and-test-pipeline.yml
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -60,6 +67,8 @@ Global
 		{C892CD73-A1BC-4EE2-B614-200671412D5A} = {F83D04E6-146F-448C-92A4-DD2F995D83CC}
 		{B1A7E5FB-E5CE-4048-BB03-0E6A53ED5A54} = {F83D04E6-146F-448C-92A4-DD2F995D83CC}
 		{657DBB50-B567-4853-BD95-EE99FBA343E8} = {F83D04E6-146F-448C-92A4-DD2F995D83CC}
+		{AA436116-ACA9-48E3-8FD8-966ABC10BEF1} = {957BDFE1-A2B9-47CB-9771-838903E43663}
+		{BE41B193-F454-4329-8FE5-DEFBBA30BAEB} = {AA436116-ACA9-48E3-8FD8-966ABC10BEF1}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {20B9B9AE-FB2B-4122-9701-4DF7A88B3E9B}
